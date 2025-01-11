@@ -23,7 +23,7 @@ contributes:
       html-math-method:
         method: mathjax
         url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?config=TeX-AMS_HTML"
-      logo: logo_gauss_branca.png
+      logo: images/logo_gauss_branca.png
       theme: [custom.scss]
       css: styles.css
       transition: slide
