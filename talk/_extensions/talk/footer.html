@@ -1,0 +1,24 @@
+<script>
+Reveal.on('ready', event => {
+  if (event.indexh === 0) {
+    document.querySelector("img.slide-logo").style.display = "none";
+    document.querySelector('div section').classList.add("titulo");
+  }
+});
+Reveal.addEventListener('slidechanged', (event) => {
+      if (event.indexh === 0) {
+        document.querySelector("img.slide-logo").style.display = "none";
+        document.querySelector('div section').classList.add("titulo");
+        //document.querySelector("div.has-logo > img.slide-logo").setAttribute('style', 'max-height: 10% !important;right: 45% !important;');
+      }
+      if (event.indexh !== 0) {
+        document.querySelector("img.slide-logo").style.display = "";
+        //document.querySelector("div.has-logo > img.slide-logo").setAttribute('style', 'max-height: 3rem !important;right: 12px !important;');
+      }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('[src*="empty.svg"]').forEach(function(el) {el.remove()})
+});
+</script>

@@ -1,0 +1,1539 @@
+---
+format: talk-revealjs
+editor: source
+lang: pt
+params:
+  titulo: '[Gauss Analítica]{.hl .hl-blue}'
+  subtitulo:  'Transformamos Dados em Soluções Sustentáveis e Estratégicas'
+---
+
+
+```{r setup, include=FALSE}
+## Pacotes importante e dados
+library(knitr)
+library(leaflet)
+library(leaflet.extras)
+library(tidyverse)
+library(haven)
+library(ggrepel)
+library(lubridate)
+library(GGally)
+library(mosaicData)
+library(paletteer)
+library(htmltools)
+library(cowplot)
+library(showtext)
+library(fontawesome)
+library(viridis)
+library(sf)
+library(readxl)
+library(reactable)
+library(vialactea)
+library(pikchr)
+library(svglite)
+library(plotly)
+
+```
+
+<!--
+## {data-background-iframe="`r particulas()`" data-background="var(--gradcapa-8)" }
+-->
+
+<!-- Título -->
+## [`r params$titulo`]{.mlk-white} <br>[`r params$subtitulo`]{.mlk-fs-75 .mlk-skyblue} {.center data-background="var(--gradblue)"}
+
+::: footer
+[Recife, `r  data_long_br()`]{.mlk-white}
+:::
+
+
+## [Sobre Nós]{.mlk-white} {.center data-background="var(--gradgreen)"}
+
+## Missão
+
+::: text
+::: {style="font-size:2rem; text-align: center; padding: 2rem; margin: auto;"}
+
+Desenvolver [**soluções inovadoras**]{.mlk-blue-5-pe} e de excelência em [*ciência de dados, políticas públicas e desenvolvimento humano*]{.mlk-blue-5-pe}, contribuindo com a [*resolução de problemas complexos e a geração de valor sustentável*]{.mlk-blue-5-pe} para os setores público e privado. 
+
+:::
+:::
+
+## Visão
+
+::: text
+::: {style="font-size:2rem; text-align: center; padding: 2rem; margin: auto;"}
+
+Ser [**referência em consultoria**]{.mlk-blue-5-pe}, reconhecida pela [*inovação, excelência e impacto positivo*]{.mlk-blue-5-pe} nas áreas de ciência de dados, políticas públicas e desenvolvimento humano. 
+
+:::
+:::
+
+## Valores
+
+::: text
+
+```{pikchr}
+#| echo: false
+#| fontFamily: 'Jost'
+#| fontSize: 13
+lg = 1.0cm
+al = 3.5cm
+box thick  "Excelência" bold big ht lg wid al rad .15cm fill 0x88CCEE color -1
+move right .2cm
+box thick "Inovação" bold big  ht lg wid al rad .15cm fill 0xCC6677 color -1
+move right .2cm
+box thick "Interdisciplinaridade" bold big ht lg wid al rad .15cm fill 0xDDCC77 color -1
+move right .2cm
+box  thick "Sustentabilidade" bold big ht lg wid al rad .15cm fill 0x117733 color -1
+```
+
+
+- [**Excelência:**]{style="color:#4477AA;"} Alcançar a qualidade e a satisfação dos clientes nos serviços prestados.
+- [**Inovação:**]{style="color:#882255;"} Estimular o uso da criatividade e do conhecimento para gerar impacto positivo.
+- [**Interdisciplinaridade:**]{style="color:#AA7744;"} Valorizar a diversidade de conhecimentos e a colaboração entre diferentes áreas para enfrentar desafios complexos.
+- [**Sustentabilidade:**]{style="color:#117733;"} Promover práticas promovam o desenvolvimento sustentável e a entrega continuada de valor.
+
+:::
+
+## Nosso time
+
+::: text
+::: {.container}
+
+::: {layout="[ 20, 80 ]"}
+::: {#first-column}
+::: {style="display: flex; justify-content: center; align-items: center; padding: 0rem; margin: 0rem;"}
+![](images/dalson.png)
+:::
+:::
+
+::: {#second-column}
+::: {style="font-size:1.5rem; text-align: center; padding: 1rem; margin: 0rem;"}
+[**Dalson Figueiredo**]{style="color:#4477AA;"}
+
+Doutor em Ciência Política, Professor da UFPE, Catalisador na Berkeley Initiative for Transparency in the Social Sciences (BITSS).
+:::
+:::
+:::
+
+::: {layout="[ 20, 80 ]"}
+::: {#first-column}
+::: {style="display: flex; justify-content: center; align-items: center; padding: 0rem; margin: 0rem;"}
+
+![](images/andre.png)
+:::
+:::
+
+::: {#second-column}
+::: {style="font-size:1.5rem; text-align: center; padding: 1rem; margin: 0rem;"}
+[**André Costa**]{style="color:#4477AA;"}
+
+Advogado, Doutor em Direito pela UFPE, mestre em Ciências Jurídico-Políticas pela Universidade de Lisboa.
+:::
+:::
+:::
+
+::: {layout="[ 20, 80 ]"}
+::: {#first-column}
+::: {style="display: flex; justify-content: center; align-items: center; padding: 0rem; margin: 0rem;"}
+
+![](images/diego.png)
+:::
+:::
+
+::: {#second-column}
+::: {style="font-size:1.5rem; text-align: center; padding: 1rem; margin: 0rem;"}
+[**Diego Leonel**]{style="color:#4477AA;"}
+
+Biólogo, Doutorando em Ciência Política na UFPE, com a temática sobre pobreza energética e desenvolvimento sustentável.
+:::
+:::
+:::
+
+:::
+:::
+
+## Principais Normas
+
+:::: mlk-callout-resize
+::: {.callout-note collapse="false" appearance="simple" icon="false"}
+
+## Open Contracting Data Standard (OCDS)
+
+O **OCDS** (*Open Contracting Data Standard*) é um padrão internacional desenvolvido para estruturar e publicar informações sobre todo o ciclo de contratação pública, desde o planejamento até a conclusão dos contratos. Ele abrange dados sobre licitações, adjudicações, fornecedores e execução dos contratos. Ao adotar o OCDS, a administração pública consegue **harmonizar** a forma como divulga e coleta dados de licitação, facilitando a comparação e análise entre diferentes órgãos e esferas de governo. Além disso, o OCDS incentiva a **transparência** e o **controle social**, pois fornece um modelo aberto e padronizado que permite aos cidadãos, jornalistas e órgãos de controle **acompanhar** cada etapa do processo de compra governamental.
+:::
+::::
+
+
+:::: mlk-callout-resize
+::: {.callout-tip collapse="false" appearance="simple" icon="false"}
+
+## Classification of the Functions of Government (COFOG)
+
+A **COFOG** (*Classification of the Functions of Government*) é uma classificação funcional adotada internacionalmente, sob a supervisão da ONU e do FMI, para categorizar os gastos públicos de acordo com sua **finalidade** (por exemplo: saúde, educação, infraestrutura, meio ambiente). Ao utilizar a COFOG, governos podem **comparar** seus gastos por função de governo, tanto internamente (entre diferentes secretarias ou programas) quanto externamente (com outros estados ou países). Essa abordagem contribui para a **transparência** na alocação de recursos e para o **planejamento** mais assertivo, pois facilita a identificação de **prioridades** e lacunas na distribuição do orçamento público.
+
+:::
+::::
+
+## Principais Normas
+
+:::: mlk-callout-resize
+::: {.callout-warning collapse="false" appearance="simple" icon="false"}
+
+## Government Finance Statistics Manual (GFSM)
+
+O **GFSM** (*Government Finance Statistics Manual*), publicado pelo Fundo Monetário Internacional (FMI), estabelece uma estrutura conceitual e metodológica para as estatísticas de finanças públicas. Ele padroniza a forma de **registrar**, **classificar** e **relatar** receitas, despesas, ativos e passivos do setor público. Ao adotar o GFSM, a gestão estadual de Pernambuco passa a ter uma **visão consolidada** dos fluxos financeiros, podendo verificar a **consistência** dos registros e garantir **comparabilidade** ao longo do tempo ou em relação a outras jurisdições. Esse alinhamento metodológico reforça a **confiabilidade** dos dados, impactando positivamente a percepção de investidores, órgãos de controle e a própria sociedade
+
+:::
+::::
+
+:::: mlk-callout-resize
+::: {.callout-important collapse="false" appearance="simple" icon="false"}
+
+## International Public Sector Accounting Standards (IPSAS)
+
+As **Normas Internacionais de Contabilidade do Setor Público** (IPSAS) fornecem um conjunto de diretrizes para o **registro contábil** de ativos, passivos, receitas e despesas específicas do setor público. Ao utilizá-las, a administração garante **transparência** e **consistência contábil**, pois as IPSAS contemplam peculiaridades que não estão presentes nos padrões de contabilidade do setor privado. Além de fornecer relatórios financeiros mais **claros** e **comparáveis**, as IPSAS asseguram maior **responsabilização** dos gestores, pois facilitam a análise de quão eficientes são as políticas públicas e os investimentos realizados.
+
+:::
+::::
+
+## Principais Normas
+
+:::: mlk-callout-resize
+::: {.callout-caution collapse="false" appearance="simple" icon="false"}
+
+## ISO 11179 (Metadados) e ISO 8000 (Qualidade de Dados)
+
+A série de **normas ISO/IEC 11179** orienta a definição e o gerenciamento de metadados, propiciando um **vocabulário comum** e padronizado para elementos de dados (nomes, formatos, definições). Isso é fundamental em um contexto de **sistemas integrados**, pois assegura que diferentes órgãos entendam e utilizem os campos de dados de maneira coerente. Já a **ISO 8000** trata especificamente de **qualidade de dados**, estipulando requisitos para garantir **completude**, **consistência** e **precisão** das informações. A adoção dessas normas resulta em bancos de dados **mais confiáveis**, facilitando o cruzamento de informações, a análise estatística e a tomada de decisões baseada em **evidências**.
+
+:::
+::::
+
+## [Arquitetura Conceitual]{.mlk-white} {.center data-background="var(--gradred)" data-background-iframe="`r particulas("branca")`"}
+
+## Arquitetura Conceitual
+
+```{pikchr}
+#| echo: false
+#| fontFamily: 'Jost'
+#| fontSize: 14px
+
+margin = 0
+
+define mlkbox {
+  D1: dot invisible
+  P1: line up ($1)/2 then left ($1)/2 then down ($1)/2 close \
+    rad ($1)/4 \
+    color $3 \
+    fill $3
+  move right ($2 - $1) from last dot; 
+  D2: dot invisible; 
+  P2: line up ($1)/2 then right ($1)/2 then down ($1)/2 close \
+    rad ($1)/4 \
+    color $3 \
+    fill $3
+  P3: line from P1.n to P2.n \
+    then to P2.e \
+    then down ($1)/4 \
+    then to ($1)/4 left of P1.s \
+    then to P1.w close \
+    color $3 \
+    fill $3 
+  $6 at P3.c  
+  L1: line from ($1)/4 below P2.e up ($1)/2 \
+    then left to ($1)/4 above P1.w \
+    then down ($1)/2 rad ($1)/4 \
+    color $5
+  dot invisible
+  P4: line down ($1)/2 then right ($1)/2 then up ($1)/2 close \
+    rad ($1)/4 \
+    color $4 \
+    fill $4
+  move right $2 from last dot; 
+  dot invisible; 
+  P5: line down ($1)/2 then left ($1)/2 then up ($1)/2 close \
+    rad ($1)/4 \
+    color $4 \
+    fill $4 
+  P6: line from P4.s to P5.s \
+    then to P5.e \
+    then up ($1)/4 \
+    then to ($1)/4 left of P4.n \
+    then to P4.w close \
+    color $4 \
+    fill $4 
+  P7: line from $1/4 + $1/32 above P5.e down ($1)/2 + $1/32 \
+    then left to $1/4 below P4.w \
+    then up $1/2 + $1/32 rad ($1)/4 \
+    color $5    
+   $7 at P7.c      
+   line from L1.start to L1.end
+  #box with .ne at ($1)/4 below P2.e wid $2 ht ($1)/2 fill $4 color $5 $7
+}
+
+
+B1: [
+    mlkbox(1.75cm, 4cm, \
+     0x9FE2BF, -1, black, \
+     "Sistemas Internos" bold, \
+     "Orçamento, Contratos, Obras")
+   ]
+
+L1: line -> from B1.s down 1cm 
+B2: [
+    mlkbox(1.75cm, 5.6cm, \
+      0x6495ED, -1, black, \
+      "Processamento e Padronização de Dados" bold, \
+      "COFOG, GFSM, OCDS")
+    ] with .n at L1.end
+    
+L2: line -> from B2.s down 1cm    
+   
+B2: [
+    mlkbox(1.75cm, 4cm, \
+      0xFFBF00, -1, black, \
+      "REDIPE" bold, \
+      "Base de Dados de Investimentos")
+    ] with .n at L2.end   
+   
+L3: line -> from B2.L1.start right 1.5cm
+L4: line -> from B2.L1.end left 1.5cm
+
+B3: box "Portal Público" fit rad .1cm with .e at L4.end ht 1cm wid 3cm fill 0xffd8be
+B4: box "API e Ferramentas" fit rad .1cm with .w at L3.end  ht 1cm wid 3cm fill 0xa4c3b2
+L5: line -> from B3.s down 1cm
+L6: line -> from B4.s down 1cm
+B5: box "Gestores" "Pesquisadores" "Órgãos de Controle" rad .1cm wid 3cm ht 1.5cm fill 0xcce3de color -1
+B6: box "Cidadãos" "Jornalistas" "ONGs" rad .1cm wid 3cm ht 1.5cm with .n at L5.end fill 0xffeedd  color -1
+
+TEXTO: [
+    box wid 3cm ht .375cm "A REDIPPE é estruturada em" big ljust invisible color darkgray
+    box wid 3cm ht .375cm "camadas integradas, desde" big  ljust invisible color darkgray
+    box wid 3cm ht .375cm "a coleta de dados até sua" big  ljust invisible color darkgray
+    box wid 3cm ht .375cm "disponibilização para gestores" big  ljust invisible color darkgray
+    box wid 3cm ht .375cm "e sociedade." big  ljust invisible color darkgray
+] with .e at 3cm left of B1.w
+line from .2cm left of TEXTO.nw to .2cm left of TEXTO.sw thickness .15cm color 0xFFBF00
+
+```
+
+## Arquitetura Conceitual
+
+```{pikchr}
+#| echo: false
+#| fontFamily: 'Jost'
+#| fontSize: 14px
+#| height: 550
+
+define trapezio {
+    line right $1 then $2 heading -30 then left ($1 - $2) then close color -1 fill $4 $5
+}
+
+define triangulo {
+    line right $1 then $1 heading -30 then close color -1 fill $3 $4
+}
+
+altura_perc = .25
+base = 5
+
+T1: [trapezio(base, base*altura_perc, black, 0xf19c79, \
+    "Governança e Qualidade de Dados" big bold \
+    "ISO 11179: Metadados e ISO 8000: Qualidade de Dados")]
+
+T2: [trapezio(base - base*altura_perc, base*altura_perc, black, 0xcbdfbd, \
+    "Estrutura de Finanças Públicas" big bold "e Contabilidade" big bold \
+    "GFSM: Estatísticas de Finanças e IPSAS: Contabilidade Pública")] with .s at T1.n
+
+T3: [trapezio(base - 2*base*altura_perc, base*altura_perc, black, 0xf6f4d2, \
+        "Classificação Funcional" big bold "e Contratações Públicas" big bold \
+        "COFOG: Funções de Governo" "OCDS: Contratos e Licitações")] with .s at T2.n
+
+T4: [triangulo(base - 3*base*altura_perc, black, 0xd4e09b, \
+    "REDIPPE" below big bold)] with .s at T3.n
+
+```
+
+## Principais Destaques
+
+::: text
+
+#### [<i class="fa-brands fa-ubuntu"></i>]{.mlk-orange-pe} Integração de Dados 
+- Repositório **unificado** de contratos, orçamentos e dados internos
+- **Conexão** entre sistemas para visão completa do investimento
+
+#### [<i class="fa-solid fa-globe"></i>]{.mlk-orange-pe} Padronização Internacional 
+- Adoção de normas **OCDS**, **COFOG** e **GFSM**
+- **Melhor comparabilidade** e **transparência** nos dados
+
+#### [<i class="fa-solid fa-universal-access"></i>]{.mlk-orange-pe} Acesso Facilitado 
+- **Portal Público** (cidadãos, jornalistas)
+- **APIs/Ferramentas** (gestores, órgãos de controle)
+
+:::	
+
+## Fluxo
+
+::: text
+
+-	**Coleta:** Extração de dados de sistemas internos (financeiros, contratos e projetos).
+-	**Padronização:** Aplicação de normas internacionais (OCDS, COFOG, GFSM).
+-	**Armazenamento:** Dados unificados na base central.
+-	**Disponibilização:** Dados acessíveis via portal público e API.
+
+:::
+
+## [Custos do investimento]{.mlk-white} {.center data-background="var(--gradocean)" data-background-iframe="`r particulas("branca")`"}
+
+## Custos do investimento – composição
+
+:::: text
+Para calcular adequadamente os custos dos investimentos, é importante delimitar os conceitos-chave e regras de negócio utilizados na construção da estimativa. Primeiro, vamos definir o que, nesta proposta, compõe o custo do investimento. 
+
+:::: {layout="[ 50, 50 ]"}
+::: {#first-column}
+
+``` {r, fig.width=8, fig.height=4, dpi=300, echo=FALSE}
+# Carregar pacotes
+library(gt)
+library(dplyr)
+library(showtext)
+
+# Adicionar a fonte "Jost" do Google Fonts
+if (!"jost" %in% font_families()) {
+  font_add_google("Jost", "jost") # Baixar a fonte se não estiver instalada
+}
+showtext_auto()
+
+# Dados da tabela
+tabela <- tibble::tibble(
+  Item = c(
+    "Licença", "Projeto", "Supervisão", 
+    "Terreno", "Obras", 
+    "Equipamentos", "Máquinas", "Investimento Inicial"
+  ),
+  `2024` = c(6980, 3000, 2000, 1485, 15000, 0, 0, 8465),
+  `2025` = c(0, 0, 2000, 0, 25000, 0, 0, 75176),
+  `2026` = c(0, 0, 2000, 0, 10000, 20000, 0, 42890),
+  Total = c(6980, 3000, 6000, 1485, 50000, 20000, 0, 126531)
+)
+
+# Criar tabela estilizada com gt
+tabela %>%
+  gt() %>%
+  tab_header(
+    title = md("**Custos Detalhados do Investimento (R$)**")
+  ) %>%
+  cols_label(
+    Item = "Item",
+    `2024` = "2024",
+    `2025` = "2025",
+    `2026` = "2026",
+    Total = "Total"
+  ) %>%
+  fmt_number(
+    columns = c(`2024`, `2025`, `2026`, Total),
+    decimals = 0,
+    sep_mark = ".", # Separador de milhar como ponto
+    dec_mark = ","  # Separador decimal como vírgula
+  ) %>%
+  tab_style(
+    style = cell_text(font = "jost", color = "black"), # Aplicar fonte Jost
+    locations = cells_body()
+  ) %>%
+  tab_style(
+    style = cell_text(font = "jost", weight = "bold", size = px(16)),
+    locations = cells_column_labels()
+  ) %>%
+  data_color(
+    columns = c(`2024`, `2025`, `2026`, Total),
+    colors = scales::col_numeric(
+      palette = c("#d9f0ff", "#80c9ff", "#0096e6"), # Gradiente de azul
+      domain = NULL
+    )
+  ) %>%
+  tab_style(
+    style = cell_fill(color = "#e8f7e4"), # Fundo para os rótulos de linhas
+    locations = cells_row_groups()
+  ) %>%
+  tab_options(
+    table.width = pct(85),
+    table.font.size = px(16),
+    column_labels.font.size = px(18),
+    data_row.padding = px(8),
+    table.border.top.style = "none",
+    table.border.bottom.style = "none",
+    row.striping.include_table_body = TRUE
+  )
+
+``` 
+:::
+
+::: {#segunda-coluna}
+::: {style="font-size:80%"}
+
+[**Custo inicial do investimento:**]{.mlk-orange-pe} 
+todos os custos para adquirir ou construir o capital, incluindo os diferentes tipos de ativos (como os intangíveis), conforme a classificação abaixo:
+
+- tipo 1: *terreno* (compra / desapropriação), *obra*, *equipamento*, *maquinário*.
+- tipo 2: *licenças*, *projeto*, *planejamento*, *gerenciamento do projeto*, *assistência técnica*, *supervisão*, *publicidade*.
+
+:::
+:::
+
+::::
+::::
+
+## Custos do investimento – totalização
+
+:::: text
+Outro elemento importante na composição é a relação custo anual x custo total. 
+
+:::: {layout="[ 60, 40 ]"}
+::: {#first-column}
+
+``` {r, fig.width=8, fig.height=4, dpi=300, echo=FALSE}
+library(ggplot2)
+library(dplyr)
+library(RColorBrewer)
+library(showtext)
+
+# Adicionar a fonte "Jost" do Google Fonts
+if (!"jost" %in% font_families()) {
+  font_add_google("Jost", "jost") # Baixar a fonte se não estiver instalada
+}
+showtext_auto()
+
+# Criar dados fictícios
+data <- data.frame(
+  Year = c("2024", "2025", "2026"),
+  Cost = c(100000, 150000, 120000),
+  Color = brewer.pal(3, "Set2") # Usar paleta Set2 para as cores
+)
+
+# Adicionar dados para a barra total (com empilhamento)
+total_data <- data %>%
+  mutate(Year = "Custo Total do Projeto")
+
+# Combinar os dados
+plot_data <- bind_rows(data, total_data)
+
+# Reordenar os fatores para que a barra total fique à direita
+plot_data$Year <- factor(plot_data$Year, levels = c("2024", "2025", "2026", "Custo Total do Projeto"))
+
+# Definir o valor total do projeto
+total_cost <- sum(data$Cost)
+
+# Gráfico com geom_label
+ggplot(plot_data, aes(x = Year, y = Cost, fill = Color)) +
+  geom_bar(stat = "identity", width = 0.5, show.legend = FALSE) +
+  # Rótulos para barras individuais
+  geom_label(
+    data = data,
+    aes(
+      label = scales::label_currency(
+        locale = "pt-BR", 
+        prefix = "R$",
+        big.mark = ".",
+        decimal.mark = ",")(Cost)),
+    vjust = -0.5,
+    color = "black",
+    size = 4,
+    family = "jost"
+  ) +
+  # Label manual para o total
+  geom_label(
+    aes(x = 4, y = total_cost, label = scales::label_currency(
+      locale = "pt-BR",
+      prefix = "R$",
+      big.mark = ".",
+      decimal.mark = ",")(total_cost)),
+    inherit.aes = FALSE,
+    color = "black",
+    fill = "white",
+    size = 5,
+    fontface = "bold",
+    family = "jost",
+    label.padding = unit(0.5, "lines"), # Margem interna
+    label.r = unit(0.2, "lines") # Arredondar bordas
+  ) +
+  scale_fill_identity() +
+  # Títulos e rótulos
+  labs(
+    x = NULL,
+    y = "Custo (R$)",
+    title = "Custo anual e total do investimento",
+    subtitle = "Comparação entre os custos anualizados e o custo total do projeto"
+  ) +
+  # Melhorar o tema do gráfico
+  theme_minimal(base_size = 8) +
+  theme(
+     plot.margin = margin(t = 0, r = 0, b = 0, l = 0),
+    text = element_text(family = "jost"), # Aplicar a fonte Jost
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5, margin = margin(t =5, b = 5)),
+    plot.subtitle = element_text(size = 14, hjust = 0.5, margin = margin(b = 5)),
+    axis.title.x = element_text(size = 12, margin = margin(t = 2)),
+    axis.title.y = element_text(size = 12, margin = margin(r = 5)),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_blank(), # Remove o texto do eixo Y
+    panel.grid = element_blank() # Remove todas as grades
+  )
+``` 
+:::
+
+::: {#second-column}
+::: {style="font-size:85%"}
+[**Custo anual e total:**]{.mlk-orange-pe} 
+Embora o custo anual seja importante, sobretudo do ponto de vista orçamentário, para ter uma ideia mais correta do investimento, os custos devem ser estimados considerando o custo total do investimento ao longo do tempo. Assim, se o projeto for plurianual, o custo total deve considerar todos os anos. 
+
+:::
+:::
+
+::::
+::::
+
+## Custos do investimento – perdas
+
+:::: text
+Quando pensamos a utilização dos investimentos ao longo do tempo, outros custos estão relacionados para garantir que o capital se transforme em serviço ou política pública.
+
+:::: {layout="[ 60, 40 ]"}
+::: {#first-column}
+``` {r, fig.width=8, fig.height=4, dpi=300, echo=FALSE}
+# Carregar pacotes
+library(gt)
+library(dplyr)
+library(showtext)
+
+# Adicionar a fonte "Jost" do Google Fonts
+if (!"jost" %in% font_families()) {
+  font_add_google("Jost", "jost") # Baixar a fonte se não estiver instalada
+}
+showtext_auto()
+
+# Dados da tabela atualizados
+tabela <- tibble::tibble(
+  Item = c(
+    "Licença", "Projeto", "Supervisão", 
+    "Terreno", "Obras", 
+    "Equipamentos", "Máquinas", 
+    "Custo de Reposição", "Valor Residual", 
+    "Total Inicial", "Total Geral do Investimento"
+  ),
+  `2024` = c(6980, 3000, 2000, 1485, 15000, 0, 0, 0, 0, 25965, 25965),
+  `2025` = c(0, 0, 2000, 0, 25000, 0, 0, 0, 0, 27000, 27000),
+  `2026` = c(0, 0, 2000, 0, 10000, 20000, 0, 0, 0, 32000, 32000),
+  `2027-2029` = c(0, 0, 0, 0, 0, 0, 0, 11890, 0, 0, 11890),
+  `2030` = c(0, 0, 0, 0, 0, 0, 0, 0, -4265, 0, -4265),
+  Total = c(6980, 3000, 6000, 1485, 50000, 20000, 0, 11890, -4265, 84965, 88210)
+)
+
+# Criar tabela estilizada com gt
+tabela %>%
+  gt() %>%
+  tab_header(
+    title = md("**Custos Detalhados do Investimento (R$)**")
+  ) %>%
+  cols_label(
+    Item = "Item",
+    `2024` = "2024",
+    `2025` = "2025",
+    `2026` = "2026",
+    `2027-2029` = "2027-2029",
+    `2030` = "2030",
+    Total = "Total"
+  ) %>%
+  fmt_number(
+    columns = c(`2024`, `2025`, `2026`, `2027-2029`, `2030`, Total),
+    decimals = 0,
+    sep_mark = ".", # Separador de milhar como ponto
+    dec_mark = ","  # Separador decimal como vírgula
+  ) %>%
+  data_color(
+    columns = c(`2024`, `2025`, `2026`, `2027-2029`, `2030`, Total),
+    colors = scales::col_bin(
+      bins = c(-Inf, 0, 1, max(tabela$Total, na.rm = TRUE)),
+      palette = c("#FFCCCC", "#F2F2F2", "#D9F0FF") # Vermelho para negativos, neutro para zero, azul claro para positivos
+    )
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#e8f7e4"), # Fundo verde-claro
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = Item %in% c("Total Inicial", "Total Geral do Investimento")
+    )
+  ) %>%
+  tab_style(
+    style = cell_text(color = "black", weight = "bold"), # Texto escuro para contraste
+    locations = cells_body(
+      rows = Item %in% c("Total Inicial", "Total Geral do Investimento"),
+      columns = c(`2024`, `2025`, `2026`, `2027-2029`, `2030`, Total)
+    )
+  ) %>%
+  tab_options(
+    table.font.size = px(14),
+    column_labels.font.size = px(16),
+    data_row.padding = px(6),
+    table.border.top.style = "none",
+    table.border.bottom.style = "none",
+    row.striping.include_table_body = TRUE
+  )
+``` 
+:::
+
+::: {#second-column}
+:::{style="font-size:80%"}
+
+[**Custo de reposição:**]{.mlk-orange-pe} 
+o custo geral do investimento deve considerar também os valores envolvidos na substituição de equipamentos e maquinário ao longo do tempo. 
+
+[**Valor residual:**]{.mlk-orange-pe} 
+o custo geral do investimento também deve a perda de valor residual ao longo do tempo, devido a diferentes eventos de depreciação. 
+
+**Num primeiro momento, o custo de reposição e o valor rsidual não serão considerados**.
+
+:::
+:::
+
+::::
+::::
+
+## Custos do investimento – operação
+
+:::: text
+Quando pensamos a utilização dos investimentos ao longo do tempo, outros custos estão relacionados para garantir que o capital se transforme em serviço ou política pública.
+
+Assim, embora não sejam utilizados na composição, é importante conhecê-los.
+
+:::{style="font-size:80%"}
+
+[**Custo de reposição:**]{.mlk-orange-pe} 
+o custo completo do investimento deve considerar também os valores envolvidos na substituição de equipamentos e maquinário, e as perdas por causa da depreciação. 
+
+**Num primeiro momento, o custo de reposição não será considerado**.
+
+[**Custo de operação:**]{.mlk-orange-pe} 
+todos os custos para operar e manter o investimento, incluindo materiais, trabalho, energia, etc.
+
+**Não deve ser acrescentado no custo do investimento. Pode ser mapeado de forma complementar para estimar o custo do serviço ou da política pública**.
+
+:::
+::::
+
+## [Unidade de Análise]{.mlk-white} {.center data-background="var(--gradocean)" data-background-iframe="`r particulas("branca")`"}
+
+## Investimentos 1 x 1
+
+:::: text
+A definição da **unidade de análise** (UA) é importante para apropriar corretamente o custo de investimentos localizados em mais de uma unidade, ou para conectar corretamente os investimentos com a estrutura orçamentária, que pode, por exemplo agrupar diferentes unidades. 
+
+Assim, a UA diz respeito ao agregado em que os dados serão analisados. No nosso caso, vamos usar como UA-orçamento a subação, e como UA-localização o município. 
+
+:::: {layout="[ 50, 50 ]"}
+::: {#first-column}
+::: {style="font-size:85%"}
+A situação mais simples que pode ocorrer é o **Investimento 1 x 1**, em que o investimento está *individualizado* na estrutura orçamentária, produz uma *unidade tangível* e de *localização única*, de modo que a apropriação é direta e a referência espacial também. 
+
+[**Exemplo**]{.mlk-orange-pe}: *Construção de Complexo Educacional*, com o investimento individualizado em uma subação e em coordenadas geográficas de tipo ponto (latitude e longitude). Assim, é possível associar diretamente o custo a uma subação e a um município. 
+:::
+:::
+
+::: {#second-column}
+![**Fábrica Tacaruna**](images/img1.jpeg)
+:::
+
+::::
+::::
+
+## Investimentos 1 x n
+
+:::: text
+Agora, vamos discutir casos em que o investimento está individualizado na estrutura orçamentária, mas possui ambiguidade na estrutura de localização. 
+
+:::: {layout="[ 60, 40 ]"}
+::: {#i2-txt}
+::: {style="font-size:80"}
+No **Investimentos 1 x n**, existe *individualização* na estrutura orçamentária, mas sua *localização está distribuída* em mais de uma unidade de interesse, de modo que a apropriação é indireta. 
+
+[**Exemplo**]{.mlk-orange-pe}: *Construção de uma estrada que corta mais de um município*, com o investimento individualizado em uma subação, mas a estrada apresenta coordenadas geográficas de tipo linha ou multilinha, que abrange duas ou mais unidades de análise. 
+
+-------------------
+
+:::{style="font-size:75%"}
+- Para obter o custo por unidade de análise, devemos dividir o custo estimado por uma **constante de apropriação**, como a quilometragem da estrada em cada município.
+
+
+:::
+
+:::
+:::
+
+::: {#i2-img}
+![**PE-045**](images/img2.png){fig-align="left"}
+:::
+
+::::
+::::
+
+## Investimentos 1 x 0
+
+:::: text
+Uma outro caso de ambiguidade de localização tem a ver com a não especificação de onde os investimentos estão situados. 
+
+:::: {layout="[ 50, 50 ]"}
+::: {#i2-txt}
+::: {style="font-size:95%"}
+No **Investimentos 1 x 0**, existe *individualização* na estrutura orçamentária, produz uma *unidade tangível ou não* com *localização indefinida ou não divisível*, de modo que a apropriação é indireta e a referência espacial também.
+
+[**Exemplo**]{.mlk-orange-pe}: *Elaboração de um plano de mitigação de efeitos ambientais*, de modo que o plano age sobre todo o conjunto das unidades de análise sem divisão exata dos custos. 
+
+:::
+:::
+
+::: {#i2-img}
+![**Plano de Cultura**](images/img3.png)
+:::
+
+::::
+
+-------------------
+
+:::{style="font-size:75%"}
+- Para obter o custo por unidade de análise, devemos dividir o custo estimado por uma **constante de apropriação**, como total de municípios beneficiados pelo plano.
+
+
+:::
+
+::::
+
+## Investimentos n x n
+
+:::: text
+Outra tipo importante a ser considerado são as situações em que existe ambiguidade na estrutura orçamentária. 
+
+:::: {layout="[ 50, 50 ]"}
+::: {#i2-txt}
+::: {style="font-size:95%"}
+O **Investimento n x n** está *agrupado* na estrutura orçamentária, mas produz um conjunto de *unidades tangíveis* cuja *localização é individualizada*, de modo que a apropriação é mista. 
+
+[**Exemplo**]{.mlk-orange-pe}: *Construção de 100 creches*, com o custo técnico (topografia etc.) em uma subação, o custo da obra em outra subação, e o custo de equipamento em uma terceira subação. Porém, todas as creches são individualizadas em coordenadas geográficas de tipo ponto (latitude e longitude). 
+
+:::
+:::
+
+::: {#i2-img}
+![**Creches**](images/img4.png)
+:::
+
+::::
+
+-------------------
+
+:::{style="font-size:75%"}
+- Para saber o custo por unidade de análise, devemos levantar os custos individuais de cada unidade, bem como dividir os custos totais do projeto (criação de projeto padrão de quadra, por exemplo) pelo total de unidades.
+
+
+:::
+
+::::
+
+## [Modelo de Dados]{.mlk-white} {.center data-background="var(--gradorange)" data-background-iframe="`r particulas("branca")`"}
+
+<!-- ## Modelo de Dados – definições -->
+
+<!-- :::: text -->
+<!-- A REDIPPE se estrutura em torno de investimentos e seus relacionamentos com contratos, fornecedores e programas/projetos do governo. Considere as seguintes tabelas e o diagrama ER a seguir. -->
+
+<!-- :::{style="font-size:80%"} -->
+
+<!-- 1.	[**Política:**]{.mlk-orange-pe}	representa uma política pública mais ampla (exemplo: política de infraestrutura, política de saúde etc.). -->
+<!-- 2.	[**Programa:**]{.mlk-orange-pe}	agrupa um conjunto de ações (projetos) com objetivos específicos, geralmente alinhados à estratégia governamental. -->
+<!-- 3.	[**Projeto:**]{.mlk-orange-pe}	são iniciativas específicas (ex.: construção de uma escola, modernização de um hospital) pertencentes a um programa. -->
+<!-- 4.	[**Projeto  –  Investimento:**]{.mlk-orange-pe} (tabela de Associação) Gerencia a relação N:N entre PROJETO e INVESTIMENTO. -->
+<!-- 5.	[**Investimento:**]{.mlk-blue-4-pe} núcleo principal, descreve um gasto ou ação de capital (obra, serviço de engenharia, aquisição de bens de capital etc.). -->
+<!-- 6.	[**Contrato:**]{.mlk-orange-pe} detalha a execução do investimento via contratação pública (licitação ou dispensa, por exemplo). -->
+<!-- 7.	[**Fornecedor:**]{.mlk-orange-pe} entidade que representa a empresa ou instituição contratada para executar o contrato. -->
+<!-- 8.	[**Localização:**]{.mlk-orange-pe} tabela que guarda as informações geográficas (município, estado, região). -->
+<!-- 9.	[**Fonte Orçamentária:**]{.mlk-orange-pe}	indica de onde vêm os recursos (ex.: governo federal, estadual, empréstimo internacional). -->
+<!-- 10.	[**Classe Funcional:**]{.mlk-orange-pe}	(COFOG ou outra classificação) tabela que armazena a classificação funcional do gasto governamental (ex.: saúde, educação, infraestrutura) -->
+
+<!-- ::: -->
+<!-- :::: -->
+
+<!-- ## Modelo de Dados - diagrama -->
+
+<!-- ```{pikchr} -->
+<!-- #| echo: false -->
+<!-- #| fontFamily: 'Jost' -->
+<!-- #| fontSize: 14 -->
+
+<!-- /* -->
+<!-- Código inicial. Para comentários em linha use \\ ou # -->
+<!-- */ -->
+<!-- len = 3mm -->
+<!-- pi = 3.141593 -->
+<!-- pointrad = 0.01in -->
+<!-- linerad = 1.5mm -->
+
+<!-- define zero_or_many_right { -->
+<!--     Czpr: circle rad len/2 -->
+<!--     LzrpR: line from Czpr.e right .75*len*cos(pi/4) -->
+<!--     LzrpU: line from Czpr.e go .75*len heading 45 -->
+<!--     LzrpD: line from Czpr.e go .75*len heading 135 -->
+<!--     dot fill red at Czpr.w rad pointrad -->
+<!-- } -->
+
+<!-- define zero_or_many_left { -->
+<!--     Czpl: circle rad len/2 -->
+<!--     LzlpL: line from Czpl.w left .75*len*cos(pi/4) -->
+<!--     LzlpU: line from Czpl.w go .75*len heading -45 -->
+<!--     LzlpD: line from Czpl.w go .75*len heading -135 -->
+<!--     dot fill red at Czpl.e rad pointrad -->
+<!--     move to Czpl.e -->
+<!-- } -->
+
+
+<!-- define many_right { -->
+<!--     Lmar0: line right len*(1 + .75*cos(pi/4))  -->
+<!--     //Lmal1: line  from Lmal0.end - (0,len/2) up len -->
+<!--     LmarU: line from Lmar0.end - (.75*cos(pi/4)*len, 0) go .75*len heading 45 -->
+<!--     LmarD: line from Lmar0.end - (.75*cos(pi/4)*len, 0) go .75*len heading 135 -->
+<!--     dot fill red at Lmar0.w rad pointrad -->
+<!-- } -->
+
+<!-- define many_left { -->
+<!--     Lmal0: line left len*(1 + .75*cos(pi/4)) -->
+<!--     //Lmal1: line  from Lmal0.end - (0,len/2) up len -->
+<!--     LmapU: line from Lmal0.end + (.75*cos(pi/4)*len, 0) go .75*len heading -45 -->
+<!--     LmapD: line from Lmal0.end + (.75*cos(pi/4)*len, 0) go .75*len heading -135 -->
+<!--     dot fill red at Lmal0.e rad pointrad -->
+<!-- } -->
+
+<!-- define one_or_many_right { -->
+<!--     Lopr0: line right len -->
+<!--     Lopr1: line  from Lopr0.end - (0,len/2) up len -->
+<!--     LolrL: line from Lopr1.c right .75*len*cos(pi/4) -->
+<!--     LolrU: line from Lopr1.c go .75*len heading 45 -->
+<!--     LolrD: line from Lopr1.c go .75*len heading 135 -->
+<!--     dot fill red at Lopr0.w rad pointrad -->
+<!-- } -->
+
+<!-- define one_or_many_left { -->
+<!--     Lopl0: line left len -->
+<!--     Lopl1: line from Lopl0.end - (0,len/2) up len -->
+<!--     LolpL: line from Lopl1.c left .75*len*cos(pi/4) -->
+<!--     LolpU: line from Lopl1.c go .75*len heading -45 -->
+<!--     LolpD: line from Lopl1.c go .75*len heading -135 -->
+<!--     dot fill red at Lopl0.e rad pointrad -->
+<!-- } -->
+
+
+<!-- define one_only_right { -->
+<!--     Loor0: line right len*(1 + .75*cos(pi/4))  -->
+<!--     Loor1: line from Loor0.end - (.75*cos(pi/4)*len, len/2) up len -->
+<!--     Loor2: line from Loor0.end - (.75*cos(pi/4)*len/2, len/2) up len -->
+<!--     //Loor2: line from Loor0.start - (-len/2,len/2) up len -->
+<!--     dot fill red at Loor0.w rad pointrad -->
+<!-- } -->
+
+
+<!-- define one_only_left { -->
+<!--     Lool0: line left len*(1 + .75*cos(pi/4))  -->
+<!--     Lool1: line from Lool0.end - (-.75*cos(pi/4)*len, len/2) up len -->
+<!--     Lool2: line from Lool0.end - (-.75*cos(pi/4)*len/2,len/2) up len -->
+<!--     dot fill red at Lool0.e rad pointrad -->
+<!-- } -->
+
+<!-- define one_left { -->
+<!--     Lool0: line left len*(1 + .75*cos(pi/4))  -->
+<!--     Lool1: line from Lool0.end + (0.75*cos(pi/4)*len, -len/2) up len -->
+<!--     //Lool2: line from Lool0.end - (-len*0.7071068/2,len/2) up len -->
+<!--     dot fill red at Lool0.e rad pointrad -->
+<!-- } -->
+
+<!-- define one_right { -->
+<!--     Losor0: line right len*(1 + .75*cos(pi/4))  -->
+<!--     Losor1: line from Losor0.end - (.75*cos(pi/4)*len, len/2) up len -->
+<!--     //Losor2: line from Losor0.end - (len*0.7071068/2,len/2) up len -->
+<!--     //Loor2: line from Loor0.start - (-len/2,len/2) up len -->
+<!--     dot fill red at Losor0.w rad pointrad -->
+<!-- } -->
+
+
+<!-- define zero_or_one_left { -->
+<!--     [ -->
+<!--     Czol: circle rad len/2 -->
+<!--     Lzol0: line from Czol.w left .75*len*cos(pi/4) -->
+<!--     Lzol1: line from Lzol0.start - (0.75*cos(pi/4)*len/2,len/2) up len -->
+<!--     dot fill red at Czol.e rad pointrad -->
+<!--     ]  -->
+<!--     move to last .e -->
+<!-- } -->
+
+<!-- define zero_or_one_right { -->
+<!--     Czor: circle rad len/2 -->
+<!--     Lzor0: line from Czor.e right .75*len*cos(pi/4) -->
+<!--     Lzor1: line from Lzor0.start - (-0.75*cos(pi/4)*len/2,len/2) up len -->
+<!--     dot fill red at Czor.w rad pointrad -->
+<!--     move to  Czor.e -->
+<!-- } -->
+
+<!-- $dist = 2cm -->
+<!-- $dist = $dist*1.5 -->
+
+<!-- Politica: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Política"  bold fill 0x277da1 -->
+<!-- Key:  box "Política – ID " bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!--       box "Nome" ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Objetivos Estratégicos" ljust small fit wid $dist with .n at last.s fill 0xf5f5f5  -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- ] -->
+
+<!-- Programa: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Programa"  bold fill 0x577590 -->
+<!-- Key:  box "Programa – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!-- FK1:  box "Política – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Nome" ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Descrição" ljust small fit wid $dist with .n at last.s fill 0xffffff -->
+<!--       box "Órgão Responsável" ljust small fit wid $dist with .n at last.s fill 0xf5f5f5  -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- ] with .nw at .5 right of Politica.ne -->
+
+<!-- Projeto: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Projeto"  bold fill 0x4d908e -->
+<!-- Key:  box "Projeto – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!-- FK1:  box "Programa – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Nome" ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Data de Início" ljust small fit wid $dist with .n at last.s fill 0xffffff -->
+<!--       box "Data de Término" ljust small fit wid $dist with .n at last.s fill 0xf5f5f5  -->
+<!--       box "Indicadores" ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill  0xf5f5f5  -->
+<!-- ] with .nw at .5 right of Programa.ne -->
+
+<!-- ProjInvest: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Projeto – Investimento"  bold fill 0x43aa8b -->
+<!-- Key:  box "Projeto – Investimento – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!-- FK1:  box "Projeto – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK2:  box "Investimento – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!-- ] with .nw at .5 right of Projeto.ne -->
+
+
+
+<!-- Investimento: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Investimento"  bold fill 0x90be6d -->
+<!-- Key:  box "Investimento – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!--       box "Nome" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Descrição" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Valor Planejado" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Valor Executado" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!-- FK4:  box "Status – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK3:  box "Localização – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!-- FK1:  box "Classificação Funcional – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK2:  box "Fonte Orçamentária – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Data Início" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Data Término" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- ] with .nw at .25 below ProjInvest.sw -->
+
+<!-- Contrato: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Contrato"  bold fill 0xf9c74f -->
+<!-- Key:  box "Contrato – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!-- FK1:  box "Investimento – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Número" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Modalidade da Licitação" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Data" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!-- FK2:  box "Fornecedor – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "Valor Adjudicado" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Valor Final" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!-- ] with .ne at .25 below Projeto.se -->
+
+
+<!-- Fornecedor: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Fornecedor"  bold fill 0xf9844a -->
+<!-- Key:  box "Fornecedor – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!--       box "Nome" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK1:  box "CNPJ – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "Endereço" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!-- ] with .ne at .25 below Programa.se -->
+
+
+<!-- Localizacao: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Localização"  bold fill 0xf8961e -->
+<!-- Key:  box "Localização – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!--       box "Município" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK1:  box "Código IBGE – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xffffff  -->
+<!-- ] with .ne at .25 below Fornecedor.se -->
+
+
+<!-- Fonte: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Fonte Orçamentária"  bold fill 0xf3722c -->
+<!-- Key:  box "Fonte – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!--       box "Nome" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK1:  box "Tipo – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xffffff  -->
+<!-- ] with .ne at .25 below Politica.se -->
+
+<!-- ClassFunc: [ -->
+<!-- Entidade: box rad 5mm  ht 5mm wid $dist "Classifição Funcional"  bold fill 0xf94144 -->
+<!-- Key:  box "Fonte – ID" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5  -->
+<!--       box "Nome" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff -->
+<!-- FK1:  box "Tipo – ID" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5  -->
+<!--       box "···" ljust small fit wid $dist with .n at last.s  fill 0xffffff  -->
+<!-- ] with .ne at .25 below Fonte.se -->
+
+<!-- A0: [one_left()] with .w at Politica.Key.e -->
+<!-- A1: [many_right()] with .e at Programa.FK1.w -->
+<!-- A2: [one_left()] with .w at Programa.Key.e -->
+<!-- A3: [many_right()] with .e at Projeto.FK1.w -->
+<!-- A4: [many_left()] with .w at Projeto.Key.e -->
+<!-- A5: [many_right()] with .e at ProjInvest.FK1.w -->
+<!-- A6: [many_left()] with .w at ProjInvest.FK2.e -->
+<!-- A7: [one_left()] with .w at Investimento.Key.e -->
+<!-- A8: [one_right()] with .e at Investimento.Key.w -->
+<!-- A9: [many_left()] with .w at Contrato.FK1.e -->
+<!-- A10: [many_right()] with .e at Contrato.FK2.w -->
+<!-- A11: [one_left()] with .w at Fornecedor.Key.e -->
+<!-- A12: [one_right()] with .e at Investimento.FK3.w -->
+<!-- A13: [one_right()] with .e at Investimento.FK2.w -->
+<!-- A14: [one_left()] with .w at Investimento.FK1.e -->
+<!-- A15: [many_left()] with .w at Localizacao.Key.e -->
+<!-- A16: [one_left()] with .w at ClassFunc.Key.e -->
+<!-- A17: [many_right()] with .e at Fonte.Key.w -->
+
+<!-- line from A0.e right until even with 1/2<A0.e, A1.w> \ -->
+<!--     then down until even with A1.w then to A1.w behind A0 -->
+<!-- line from A2.e right until even with 1/2<A2.e, A3.w> \ -->
+<!--     then down until even with A3.w then to A3.w behind A2 -->
+<!-- line from A4.e right until even with 1/2<A4.e, A5.w> \ -->
+<!--     then down until even with A5.w then to A5.w behind A4 -->
+<!-- line from A6.e right (A1.x - A0.x)/2 \ -->
+<!--     then down until even with A7.e then to A7.e behind A6 -->
+<!-- line from A8.w left until even with 1/2<A8.e, A9.w> \ -->
+<!--     then down until even with A9.w then to A9.w behind A8 -->
+<!-- line from A10.w left until even with 1/2<A10.e, A11.w> \ -->
+<!--     then up until even with A11.w then to A11.w behind A10 -->
+<!-- line from A12.w left  2*(A12.w.x - Contrato.e.x)/3 \ -->
+<!--     then down until even with .3 below Contrato.s \ -->
+<!--     then left until even with 1/2<A10.e, A11.w> \ -->
+<!--     then up until even with A15.e then to A15.e behind A12 -->
+<!-- line from A13.w left  1*(A12.w.x - Contrato.e.x)/3 \ -->
+<!--     then down until even with .4 below Contrato.s \ -->
+<!--     then left until even with 1/2<A0.e, A1.w> \ -->
+<!--     then up until even with A16.e then to A16.e behind A13 -->
+<!-- line from A14.e right  (A12.w.x - Contrato.e.x)/2  \ -->
+<!--     then down until even with .5 below Contrato.s \ -->
+<!--     then left until even with (A12.w.x - Contrato.e.x)/2 left of A17.w -->
+<!--     then up until even with A17.e then to A17.e behind A14 -->
+
+<!-- ``` -->
+
+
+## Modelo de Dados - diagrama
+
+```{pikchr}
+#| echo: false
+#| fontFamily: 'Jost'
+#| fontSize: 14
+
+/*
+Código inicial. Para comentários em linha use \\ ou #
+*/
+len = 3mm
+pi = 3.141593
+pointrad = 0.01in
+linerad = 1.5mm
+
+define zero_or_many_right {
+    Czpr: circle rad len/2
+    LzrpR: line from Czpr.e right .75*len*cos(pi/4)
+    LzrpU: line from Czpr.e go .75*len heading 45
+    LzrpD: line from Czpr.e go .75*len heading 135
+    dot fill red at Czpr.w rad pointrad
+}
+
+define zero_or_many_left {
+    Czpl: circle rad len/2
+    LzlpL: line from Czpl.w left .75*len*cos(pi/4)
+    LzlpU: line from Czpl.w go .75*len heading -45
+    LzlpD: line from Czpl.w go .75*len heading -135
+    dot fill red at Czpl.e rad pointrad
+    move to Czpl.e
+}
+
+
+define many_right {
+    Lmar0: line right len*(1 + .75*cos(pi/4)) 
+    //Lmal1: line  from Lmal0.end - (0,len/2) up len
+    LmarU: line from Lmar0.end - (.75*cos(pi/4)*len, 0) go .75*len heading 45
+    LmarD: line from Lmar0.end - (.75*cos(pi/4)*len, 0) go .75*len heading 135
+    dot fill red at Lmar0.w rad pointrad
+}
+
+define many_left {
+    Lmal0: line left len*(1 + .75*cos(pi/4))
+    //Lmal1: line  from Lmal0.end - (0,len/2) up len
+    LmapU: line from Lmal0.end + (.75*cos(pi/4)*len, 0) go .75*len heading -45
+    LmapD: line from Lmal0.end + (.75*cos(pi/4)*len, 0) go .75*len heading -135
+    dot fill red at Lmal0.e rad pointrad
+}
+
+define one_or_many_right {
+    Lopr0: line right len
+    Lopr1: line  from Lopr0.end - (0,len/2) up len
+    LolrL: line from Lopr1.c right .75*len*cos(pi/4)
+    LolrU: line from Lopr1.c go .75*len heading 45
+    LolrD: line from Lopr1.c go .75*len heading 135
+    dot fill red at Lopr0.w rad pointrad
+}
+
+define one_or_many_left {
+    Lopl0: line left len
+    Lopl1: line from Lopl0.end - (0,len/2) up len
+    LolpL: line from Lopl1.c left .75*len*cos(pi/4)
+    LolpU: line from Lopl1.c go .75*len heading -45
+    LolpD: line from Lopl1.c go .75*len heading -135
+    dot fill red at Lopl0.e rad pointrad
+}
+
+
+define one_only_right {
+    Loor0: line right len*(1 + .75*cos(pi/4)) 
+    Loor1: line from Loor0.end - (.75*cos(pi/4)*len, len/2) up len
+    Loor2: line from Loor0.end - (.75*cos(pi/4)*len/2, len/2) up len
+    //Loor2: line from Loor0.start - (-len/2,len/2) up len
+    dot fill red at Loor0.w rad pointrad
+}
+
+
+define one_only_left {
+    Lool0: line left len*(1 + .75*cos(pi/4)) 
+    Lool1: line from Lool0.end - (-.75*cos(pi/4)*len, len/2) up len
+    Lool2: line from Lool0.end - (-.75*cos(pi/4)*len/2,len/2) up len
+    dot fill red at Lool0.e rad pointrad
+}
+
+define one_left {
+    Lool0: line left len*(1 + .75*cos(pi/4)) 
+    Lool1: line from Lool0.end + (0.75*cos(pi/4)*len, -len/2) up len
+    //Lool2: line from Lool0.end - (-len*0.7071068/2,len/2) up len
+    dot fill red at Lool0.e rad pointrad
+}
+
+define one_right {
+    Losor0: line right len*(1 + .75*cos(pi/4)) 
+    Losor1: line from Losor0.end - (.75*cos(pi/4)*len, len/2) up len
+    //Losor2: line from Losor0.end - (len*0.7071068/2,len/2) up len
+    //Loor2: line from Loor0.start - (-len/2,len/2) up len
+    dot fill red at Losor0.w rad pointrad
+}
+
+
+define zero_or_one_left {
+    [
+    Czol: circle rad len/2
+    Lzol0: line from Czol.w left .75*len*cos(pi/4)
+    Lzol1: line from Lzol0.start - (0.75*cos(pi/4)*len/2,len/2) up len
+    dot fill red at Czol.e rad pointrad
+    ] 
+    move to last .e
+}
+
+define zero_or_one_right {
+    Czor: circle rad len/2
+    Lzor0: line from Czor.e right .75*len*cos(pi/4)
+    Lzor1: line from Lzor0.start - (-0.75*cos(pi/4)*len/2,len/2) up len
+    dot fill red at Czor.w rad pointrad
+    move to  Czor.e
+}
+
+$dist = 2cm
+$dist = $dist*1.5
+
+Investimento: [
+Entidade: box rad 5mm  ht 5mm wid $dist "Investimentos"  bold fill 0x90be6d
+Key:  box "Investimento – ID 🔑" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5 
+      box "Nome da Iniciativa 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Descrição da Iniciativa 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Grupo da Iniciativa 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Eixo da Iniciativa 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Objetivo Estratégico 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Classificação da Iniciativa 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Status da Pactuação 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Código do Convênio 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Tipo do Convênio 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Órgão 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Unidade Executiva 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Responsável 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Status da Iniciativa 🗂️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Data Início (Prev.) 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Data Conclusão (Prev.) 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+] // with .nw at .25 below ProjInvest.sw
+
+Despesa: [
+Entidade: box rad 5mm  ht 5mm wid $dist "Despesas"  bold fill 0xf9c74f
+Key:  box "Despesa – ID 🔑️" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5 
+FK1:  box "Investimento – ID 🔗" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Ação 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Subação 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Fonte 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Contrato 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+FK2:  box "Valor Terreno 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Valor Obra 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5 
+      box "Valor Equipamento 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Valor Maquinário 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Valor Licenças 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Valor Projeto 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Valor Gerenciamento 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Valor Supervisão 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Valor Publicidade 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+] with .nw at .75 right of Investimento.ne
+
+Monitoramento: [
+Entidade: box rad 5mm  ht 5mm wid $dist "Execução"  bold fill 0xf9c74f
+Key:  box "Execução – ID 🔑️" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5 
+FK1:  box "Investimento – ID 🔗" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Status Detalhado 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Próxima Etapa 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Observação 🔠️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Tipo Ação Corretiva 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Ação Corretiva 🔠️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+FK2:  box "Execução Física 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Prazo Próxima Etapa 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Data Início (Real) 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Data Conclusão (Real) 🔢" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+] with .ne at .75 left of Investimento.nw
+
+Localizacao: [
+Entidade: box rad 5mm  ht 5mm wid $dist "Localização"  bold fill 0xf9c74f
+Key:  box "Localização – ID 🔑️" bold ljust small fit wid $dist with .n at Entidade.s fill 0xf5f5f5 
+FK1:  box "Investimento – ID 🔗" bold ljust small fit wid $dist with .n at last.s  fill 0xffffff
+      box "Tipo Produto 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Produto 🔠️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "RD 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Código IBGE 🗂️️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+      box "Geometria 🧭️" bold ljust small fit wid $dist with .n at last.s  fill 0xf5f5f5
+] with .nw at .125 below Monitoramento.sw
+
+A1: [one_right()] with .e at Investimento.Key.w
+A2: [many_left()] with .w at Monitoramento.FK1.e
+A3: [many_left()] with .w at Localizacao.FK1.e
+
+A4: [one_left()] with .w at Investimento.Key.e
+A5: [many_right()] with .e at Despesa.FK1.w
+
+line from A1.e left until even with 1/2<A1.w, A2.e> \
+     then down until even with A2.e then to A2.e behind A1
+
+line from A1.e left until even with 1/2<A1.w, A3.e> \
+     then down until even with A3.e then to A3.e behind A1
+
+line from A4.w right until even with 1/2<A4.e, A5.e> \
+     then down until even with A5.e then to A5.e behind A4
+    
+```
+
+## [Governança de Dados e Estruturação]{.mlk-white} {.center data-background="var(--gradocean)" data-background-iframe="`r particulas("branca")`"}
+
+## Governança Intersetorial
+
+::: text
+Formar um comitê gestor com Secretaria de Planejamento, Controladoria, Fazenda e outras pastas-chave.
+:::
+
+## Padrões Internacionais
+
+::: text
+
+- OCDS ([*Open Contracting Data Standard*]{.mlk-blue-3-pe}) para licitações/contratações.
+-	COFOG ([Classificação das Funções de Governo]{.mlk-blue-3-pe}) para agrupar investimentos.
+-	GFSM ([*Government Finance Statistics Manual*]{.mlk-blue-3-pe}) para padronizar as estatísticas fiscais.
+-	IPSAS ([Normas Internacionais de Contabilidade do Setor Público]{.mlk-blue-3-pe}) para registro contábil de ativos.
+
+:::
+
+## Qualidade de Dados
+
+::: text
+
+-	ISO 11179 para metadados (definições claras de cada campo).
+-	ISO 8000 para requisitos de qualidade de dados (completude, consistência e precisão).
+
+:::
+
+## Aplicação Prática
+
+::: text
+
+-	Rotinas de **validação automática** na inclusão de dados.
+-	Adoção de **vocabulários controlados** (ex.: COFOG) para consistência.
+
+:::
+
+## [Indicadores e Análises de Desempenho]{.mlk-white} {.center data-background="var(--gradblue)" data-background-iframe="`r particulas("branca")`"}
+
+## Indicadores-Chave (KPIs)
+
+::: text
+
+-	**Eficiência:** Percentual de projetos concluídos no prazo e dentro do orçamento.
+-	**Integridade:** % de contratos com múltiplos licitantes, desvios identificados, etc.
+-	**Qualidade de Gastos:** Relação entre valor investido e impacto social ou econômico.
+
+:::
+
+## Ferramentas Analíticas
+
+::: text
+
+-	Possibilidade de usar **Business Intelligence (BI)** e análise preditiva para detectar riscos de atraso, sobrepreço ou baixa execução.
+-	**Indicadores de Compras:** Identificar competitividade, número de licitantes, percentual de participação de PME.
+
+:::
+
+## [Capacitação e Unidade de Análise]{.mlk-white} {.center data-background="var(--gradgreen)" data-background-iframe="`r particulas("branca")`"}
+
+## Formação de Capital Humano
+
+::: text
+
+-	Treinamentos regulares sobre padrões de dados e ferramentas de análise.
+-	Criação de unidades de análise estatística (Data Labs) para apoiar gestores.
+
+:::
+
+## Benefícios
+
+::: text
+
+-	Melhor tomada de decisão embasada em evidências.
+-	Menor dependência de consultorias externas para análises complexas.
+
+:::
+
+## [Cronograma de Implementação]{.mlk-white} {.center data-background="var(--gradred)" data-background-iframe="`r particulas("branca")`"}
+
+
+## Linha do tempo
+
+
+::: mlk-center
+```{r}
+
+cronograma <- tribble(
+  ~Fase,         ~Prazo,   ~PrincipaisAtividades,
+  "Definição",   "1 – 3",    "Ajuste do escopo – Governança (Comitê) – Mapeamento de sistemas",
+  "Integração",  "4 – 6",    "Construção do modelo de dados – Padronização (COFOG, OCDS) – Pilotos de importação",
+  "Operacional", "7 – 9",    "Portal da REDIPPE – Configuração de indicadores – Testes de qualidade de dados",
+  "Expansão",    "10 – 12",  "Lançamento oficial – Capacitação ampliada – Monitoramento inicial de desempenho"
+)
+
+cronograma %>%
+  reactable(
+    defaultColDef = colDef(
+      headerClass = "mlk-header",
+      align = "left", 
+      headerVAlign = "center",
+      minWidth = 150,
+      style = list(fontSize = "1rem"),
+      cell = function(value) {
+          div(fontSize = "1rem", value)
+        },
+      headerStyle = list(fontSize = "1rem", color = "black") #e0e0e0") background = "#dfe2e5"
+    ),
+    columns = list(
+      `Fase` = colDef(
+        name = "Fase",
+        style = list(color = "black", fontSize = "1rem"),
+        align = "left"
+      ),
+      `Prazo` = colDef(
+        name = "Prazo",
+        style = list(color = "black", fontSize = "1rem"),
+        align = "center"
+      ),
+      `PrincipaisAtividades` = colDef(
+        html = TRUE,
+        name = "Principais Atividades",
+        style = list(color = "black", fontSize = "1rem"),
+        align = "left",
+        minWidth = 500
+      )
+
+    ),
+    #bordered = TRUE,
+    highlight = TRUE, 
+    outlined = FALSE,
+    #compact = TRUE,
+    striped = TRUE,
+    fullWidth = FALSE,
+    theme = reactableTheme(
+      # borderColor = "#dfe2e5",
+      # stripedColor = "#f6f8fa",
+      # highlightColor = "#f0f5f9",
+      # cellPadding = "8px 12px",
+      headerStyle = list(
+        "&:hover[aria-sort]" = list(background = "hsl(0, 0%, 96%)") #,
+        #"&[aria-sort='ascending'], &[aria-sort='ascending']" = list(background = "hsl(0, 0%, 96%)"),
+      #borderColor = "#555"
+    )
+  ),
+  class = "mlk-dist-tbl"
+  )
+```
+:::
+
+## Benchmarking
+
+::: text
+
+Aqui estão alguns links úteis com ferramentas de gestão de dados de investimento utilizadas pelo *Governo Federal*
+
+**Brasil**
+- <a href="https://cipi.economia.gov.br/cipi-frontend/pesquisa-aberta-projetos" target="_blank">Cadastro Integrado de Projetos de Investimento</a>
+
+E em *outros países*
+
+**Argentina**
+- <a href="https://mapainversiones.obraspublicas.gob.ar/#/projetos/?zoom=5&center=-40.454334327496696,-65.74520107071577&topLeft=-21.298419367058642,-94.72713466446577&bottomRight=-55.38462546781011,-36.763267476965765" target="_blank">Mapa Inversiones - Obras Públicas en Argentina</a>
+
+**Colômbia**
+- <a href="https://mapainversiones.dnp.gov.co/" target="_blank">Mapa Inversiones</a>
+
+**Honduras**
+- <a href="https://hondurasinversiones.gob.hn/MapView" target="_blank">Mapa de Inversión Pública</a>
+
+**Jamaica**
+- <a href="https://publicinvestmentmap.gov.jm/#/proyectos/?zoom=9&center=18.109037982846417,-77.45448737612851&topLeft=18.760443608192304,-79.27959113589414&bottomRight=17.45520141707368,-75.62938361636289">Investment Map - The Government of Jamaica Public investment projects</a>
+
+**Panamá**
+- <a href="https://gestiontransparentepanama.mef.gob.pa/">Gestión Trasparente</a>
+
+**Perú**
+- <a href="https://mapainversiones.minem.gob.pe/#/proyectos/?zoom=6&center=-10.759466555099237,-77.18464355080022&topLeft=-2.9118569576462647,-91.34602050392522&bottomRight=-18.408300262467606,-63.02326659767522">Mapa Inversiones</a>
+
+:::
+
+## Referências
+
+::: text
+
+- [European Commission: Directorate-General for Regional and Urban Policy, **Guide to cost-benefit analysis of investment projects – Economic appraisal tool for cohesion policy 2014-2020**, Publications Office, 2015](https://op.europa.eu/en/publication-detail/-/publication/120c6fcc-3841-4596-9256-4fd709c49ae4)
+
+:::
+
+## Conclusão
+
+::: text
+
+A REDIPPE pode **revolucionar** o modo como o Estado de Pernambuco gerencia e divulga seus investimentos. Incorporando **as melhores práticas internacionais** em dados públicos (OCDS, COFOG, GFSM, IPSAS) e garantindo **qualidade** e **governança**, a REDIPPE tornará os gastos públicos mais **transparentes**, **eficientes** e **confiáveis** para todos os pernambucanos.
+
+:::
+
+## [--- Perguntas?]{.hl .hl-blue-1 .mlk-black} { .center data-background-iframe="`r particulas("pernambuco")`" data-background="var(--gradpink)"}
+  
+
