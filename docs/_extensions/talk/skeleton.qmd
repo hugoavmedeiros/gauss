@@ -1,0 +1,972 @@
+---
+format: talk-revealjs
+editor: source
+lang: pt
+params:
+  titulo: 'Localização de [maternidades]{.hl .hl-blue}'
+  subtitulo:  'Estudo para o Estado de Pernambuco'
+---
+
+
+```{r setup, include=FALSE}
+## Pacotes importante e dados
+library(knitr)
+library(leaflet)
+library(leaflet.extras)
+library(tidyverse)
+library(haven)
+library(ggrepel)
+library(lubridate)
+library(GGally)
+library(mosaicData)
+library(paletteer)
+library(htmltools)
+library(cowplot)
+library(showtext)
+library(fontawesome)
+library(sf)
+library(readxl)
+library(reactable)
+library(vialactea)
+library(pikchr)
+
+### Dados
+
+pe <- read_rds("data/pe_dados.rds")
+pe_limits <- read_rds("data/pe_limits.rds")
+cost18a22 <- read_rds("data/cost18a22.rds")
+pe_routes <- read_rds("data/pe_routes_linux.rds")
+solucao_x <- read_rds("data/solucao_x.rds")
+tipo_parto <- read_rds("data/tipo_parto_res.rds") 
+mortalidade_materna <- read_rds("data/mortalidade_materna.rds")
+mortalidade_perinatal <- read_rds("data/mortalidade_perinatal.rds")
+costmatrix_table <- read_rds("data/costmatrix_table.rds")
+rodovias_federais <- read_rds("data/rodovias_federais.rds")
+custo <- read_rds("data/custo.rds")
+custo_sol <- read_rds("data/custo_sol.rds")
+```
+
+
+## {data-background-iframe="`r particulas()`" data-background="var(--gradcapa-8)" }
+
+<!-- Título -->
+## [`r params$titulo`]{.mlk-white} <br>[`r params$subtitulo`]{.mlk-fs-75 .mlk-skyblue} {.center data-background="var(--gradblue)" data-background-iframe="`r particulas("branca")`"}
+
+::: footer
+[Olinda, `r  data_long_br()`]{.mlk-white}
+:::
+
+<!-- Equipe -->
+## Equipe
+
+::: {#listaequipe .text}
+-   Diogo Bezerra <a href='mailto:diogo.bezerra@sepe.pe.gov.br'>`r fontawesome::fa(name = 'envelope', fill = 'RoyalBlue')`</a> <br> <em>Secretário</em>
+-   André Leite <a href='mailto:Secretário Executivo de Monitoramento'> `r fontawesome::fa(name = 'envelope', fill = 'RoyalBlue')`</a> <br> <em>Secretário Executivo de Monitoramento</em>
+-   Arissa Andrade <a href='mailto:arissa.andrade@sepe.pe.gov.br'>`r fontawesome::fa(name = 'envelope', fill = 'RoyalBlue')`</a> <br> <em>Gerente Geral de Monitoramento</em>
+-   Carlos Amorim <a href='mailto:carlos.amorim@sepe.pe.gov.br'>`r fontawesome::fa(name = 'envelope', fill = 'RoyalBlue')`</a> <br> <em>Assessor Especial</em>
+-   Hortênsia Nunes <a href='mailto:hortensia.nunes@sepe.pe.gov.br'>`r fontawesome::fa(name = 'envelope', fill = 'RoyalBlue')`</a> <br> <em>Superintendente Técnica</em>
+-   Rafael Zimmerle <a href='mailto:rafael.zimmerle@sepe.pe.gov.br'>`r fontawesome::fa(name = 'envelope', fill = 'RoyalBlue')`</a> <br> <em>Assessor Especial</em>
+:::
+
+<!-- A Economia dos pobres -->
+##  {.center data-background="var(--gradocean)"}
+
+::: columns
+::: {.column .text width="60%"}
+> *Como Veremos, ideologia, ignorância e inércia. Os três Is --- por parte dos especialistas, do trabalhador humanitário ou do formulador de políticas do lugar explicam com frequência por que as políticas fracassam e por que a ajuda não produz o efeito pretendido.*
+
+::: mlk-author
+**Esther Duflo & Abhijit V. Banerjje.**<br>A Economia dos pobres
+:::
+:::
+
+::: {.column width="40%"}
+![](images/PoorEconomics.jpg){height="500px" style="'text-align:right;\""}
+:::
+:::
+
+## [Modelos de localização<br>]{.mlk-white}[para otimizar [distância]{.hl .hl-red} e [vagas]{.hl .hl-red}]{.mlk-fs-75} {
+  .center 
+  data-background="var(--gradred)" 
+  data-background-iframe="`r particulas("branca")`"
+  }
+
+```{r}
+#| label: leaflet-1
+#| eval: true
+
+data <- cost18a22 %>%
+  rowwise() %>%
+  mutate(text = HTML(paste(
+    "<strong>Cidade Origem:</strong> ", 
+    município_origem,
+    "</br><strong>Cidade destino:</strong> ", 
+    município_destino,
+    "</br><strong>Distância (Km):</strong> ", 
+    format(Distância / 1000, decimal.mark = ",", 
+           big.mark = ".", digits = 2),
+    "</br><strong>Nascimentos:</strong> ", 
+    format(n, decimal.mark = ",", big.mark = "."),
+    sep = ""
+  ))) %>%
+  mutate(
+    origem6 = str_sub(Origem, 1, 6),
+    destino6 = str_sub(Destino, 1, 6)
+  ) %>%
+  left_join(pe_routes %>%
+    mutate(
+      origem6 = str_sub(origem, 1, 6),
+      destino6 = str_sub(destino, 1, 6)
+    ), by = join_by(origem6, destino6)) %>%
+  st_as_sf()
+
+pals1 <- pals::brewer.set1(n = 3)
+
+# caption <- tags$div(
+#   HTML("Nascimentos com origem ou destino em")
+# )
+
+recife <- data %>%
+      filter(
+        #município_origem == "Recife" |
+          município_destino == "Recife",
+        n >= 5
+      )
+caruaru <- data %>%
+      filter(
+        #município_origem == "Caruaru" |
+          município_destino == "Caruaru",
+        n >= 5
+      )
+petrolina <- data %>%
+      filter(
+        #município_origem == "Petrolina" |
+          município_destino == "Petrolina",
+        n >= 5
+      )
+
+map <- leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(
+    data = pe_limits,
+    weight = 2,
+    color = "#0068ffff",
+    opacity = .5,
+    fill = FALSE
+  ) %>%
+  addPolylines(
+    data = recife,
+    weight = 2,
+    opacity = .9,
+    color = ~ if_else(município_destino == "Recife",
+      pals1[1],
+      pals1[3]
+    ),
+    label = ~text,
+    group = "Recife"
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~long_origem,
+    lat = ~lat_origem,
+    weight = 2,
+    radius = 3,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~text,
+    fillColor = ~ if_else(município_destino == "Recife", pals1[1], pals1[3]),
+    group = "Recife",
+    data = recife %>% st_drop_geometry()
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~long_destino,
+    lat = ~lat_destino,
+    weight = 2,
+    radius = 3,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~município_destino,
+    fillColor = ~ if_else(município_origem == "Recife", pals1[1], pals1[3]),
+    group = "Recife",
+    data = recife
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~longitude,
+    lat = ~latitude,
+    weight = 4,
+    radius = 8,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~nome,
+    fillColor = pals1[2],
+    data = pe %>% st_drop_geometry() %>% filter(nome == "Recife"),
+    group = "Recife"
+  ) %>%
+  ####################
+addPolylines(
+    data = caruaru,
+    weight = 2,
+    opacity = .9,
+    color = ~ if_else(município_destino == "Caruaru",
+      pals1[1],
+      pals1[3]
+    ),
+    label = ~text,
+    group = "Caruaru"
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~long_origem,
+    lat = ~lat_origem,
+    weight = 2,
+    radius = 3,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~text,
+    fillColor = ~ if_else(município_destino == "Caruaru", pals1[1], pals1[3]),
+    group = "Caruaru",
+    data = caruaru %>% st_drop_geometry()
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~long_destino,
+    lat = ~lat_destino,
+    weight = 2,
+    radius = 3,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~município_destino,
+    fillColor = ~ if_else(município_origem == "Caruaru", pals1[1], pals1[3]),
+    group = "Caruaru",
+    data = caruaru
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~longitude,
+    lat = ~latitude,
+    weight = 4,
+    radius = 8,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~nome,
+    fillColor = pals1[2],
+    data = pe %>% st_drop_geometry() %>% filter(nome == "Caruaru"),
+    group = "Caruaru"
+  ) %>%
+    ####################
+addPolylines(
+    data = petrolina,
+    weight = 2,
+    opacity = .9,
+    color = ~ if_else(município_destino == "Petrolina",
+      pals1[1],
+      pals1[3]
+    ),
+    label = ~text,
+    group = "Petrolina"
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~long_origem,
+    lat = ~lat_origem,
+    weight = 2,
+    radius = 3,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~text,
+    fillColor = ~ if_else(município_destino == "Petrolina",
+                          pals1[1], 
+                          pals1[3]),
+    group = "Petrolina",
+    data = petrolina %>% st_drop_geometry()
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~long_destino,
+    lat = ~lat_destino,
+    weight = 2,
+    radius = 3,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~município_destino,
+    fillColor = ~ if_else(município_origem == "Petrolina", 
+                          pals1[1], 
+                          pals1[3]),
+    group = "Petrolina",
+    data = petrolina
+  ) %>%
+  addCircleMarkers(
+    color = "black",
+    lng = ~longitude,
+    lat = ~latitude,
+    weight = 4,
+    radius = 8,
+    opacity = 1,
+    fillOpacity = 1,
+    label = ~nome,
+    fillColor = pals1[2],
+    data = pe %>% st_drop_geometry() %>% filter(nome == "Petrolina"),
+    group = "Petrolina"
+  ) %>%
+  #############################
+  fitBounds(
+    lng1 = -41.358336,
+    lat1 = -9.482897,
+    lng2 = -34.806691,
+    lat2 = -7.272954
+  ) %>%
+  # Layers control
+  addLayersControl(
+    baseGroups = c("Recife", "Caruaru", "Petrolina"),
+    #overlayGroups = c("Quakes", "Outline"),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>% 
+    addControl(HTML("<b>Deslocamento diário</b></br>11.234 Km (2018 &mdash; 2022)"),
+             position = "topright") %>%
+
+   addEasyButton(easyButton(
+        icon = "icon ion-home", 
+        title="Ajustar para Pernambuco",
+        onClick=JS("function(btn, map){ 
+               var southWest = new L.LatLng(-9.482897, -41.358336),
+                   northEast = new L.LatLng(-7.272954, -34.806691),
+                   bounds = new L.LatLngBounds(southWest, northEast);
+               map.fitBounds(bounds);
+               }")
+      )) 
+
+if(!dir.exists("images")) dir.create("images")
+
+htmlwidgets::saveWidget(map, "images/mapa_sq.html")
+rm(map)
+
+```
+
+
+## [*Status Quo*]{.hl .hl-red} {data-background-iframe="images/mapa_sq.html" data-background-interactive="true"}
+
+## Usando o Pikchr
+
+```{pikchr}
+#| label: pokchr
+#| width: 100%
+#| fig-align: center
+#| size: 10pt
+
+$len = 175px;
+margin = 20px;
+/* First Stage */
+B1E: box rad 5px wid 2*$len fill white;
+LineCusto: line <- from B1E.n - ((2/3)*$len,0) up  .25*$len;
+BoxCusto:box rad 5px wid .5*$len ht .25*$len fill 0xFFD320;
+"Custo" at BoxCusto.c;
+LineDistancia: line <- thick from BoxCusto.w + (0,.25*$len/6) left .25*$len/2 then up .25*$len/6 then left .15*$len/2;
+D1:box rad 10px ht .12*$len  wid .35*$len fill 0xFFD320;
+"Distância" at D1.c;
+LineDistancia: line <- thick  from BoxCusto.w  - (0,.25*$len/6) left .25*$len/2 then down .25*$len/6  then left .15*$len/2 color gray;
+T1:box rad 10px ht .12*$len wid .35*$len fill 0xFFD320;
+"Tempo" at T1.c;
+text "Primeiro Estágio" bold at B1E.c  color black; 
+LineNumMat: line <- from B1E.n up .25*$len; 
+NM: box rad 10px fill 0x004586 ht .25*$len wid .6*$len;
+LineDemRisco: line <- from B1E.n + ((2/3)*$len,0) up  .25*$len;
+NR: box rad 10px  wid .6*$len fill 0x7E0021 ht .25*$len;
+text "Número de Novas" "Maternidades" at NM.c color white;
+text "Nascimentos" "de risco" at NR.c color white;
+
+/*Second Stage */
+B2E: box rad 5px with .n at B1E.s - (0, (.6)*$len) wid 2*$len fill white;
+LineOfeta: line <- from B2E.n up .2*$len;
+OF: box rad 10px ht .2*$len wid .5*$len fill 0xFF420E;
+"Nascimentos" "no município" at OF.c;
+LineDemanda: line <- from B2E.n - ((2/3)*$len,0) up .2*$len;
+DM: box rad 10px  ht .2*$len wid .5*$len fill 0x83CAFF;
+"Nascimentos" "de residentes" at DM.c;
+LineResultado: line -> "Polos" aligned above italic from B2E.e right .35*$len;
+RS: file "Resultado" bold ht .25*$len wid .5*$len fill 0x579D1C;
+LineSegEst: line -> "Macropolos" above italic aligned from B1E.s + ((2/3)*$len,0) down  .6*$len; 
+text "Segundo Estágio" bold at B2E.c color black; 
+BX: box thin dashed with .c at 1/2<OF.c,DM.c> wid 1.35*$len ht OF.height + .2;
+text "Município" above at BX.n;
+
+```
+
+
+## Objetivo
+
+::: {style="display:none"}
+\$ \newcommand{\minimizar}{\mathop{\rm minimizar}\nolimits} \$
+:::
+
+<!-- <div style="display:none"> -->
+
+<!-- $ -->
+
+<!-- \newcommand\testmacro[2]{\mathbf{F\alpha}(#1)^{#2}} -->
+
+<!-- $ -->
+
+<!-- </div> -->
+
+<!-- Then we can use $\testmacro{17,1}{\text{hallo}}$ to get  -->
+
+::: r-stack
+::: current-visible
+```{=tex}
+\begin{equation}
+\mathop{\rm minimizar}\nolimits\sum_{i=1}^n\sum_{j=1}^n \gamma_{ij} \cdot x_{ij} + \sum_{i=1}^n \nu_i \nonumber
+\end{equation}
+```
+:::
+
+::: {.fragment .current-visible .fade-in fragment-index="1"}
+```{=tex}
+\begin{equation}
+\definecolor{texredpe}{rgb}{0.929, 0.157, 0.173}
+\mathop{\rm minimizar}\nolimits{\color{texredpe}\sum_{i=1}^n\sum_{j=1}^n \gamma_{ij} \cdot x_{ij}} + \sum_{i=1}^n \nu_i \nonumber
+\end{equation}
+```
+:::
+
+::: {.fragment .current-visible .fade-in fragment-index="2"}
+```{=tex}
+\begin{equation}
+\definecolor{texbluepe}{rgb}{0.267, 0, 1}
+\mathop{\rm minimizar}\nolimits{\color{texredpe}\sum_{i=1}^n\sum_{j=1}^n \gamma_{ij} \cdot x_{ij}} + {\color{texbluepe}\sum_{i=1}^n \nu_i} \nonumber
+\end{equation}
+```
+:::
+:::
+
+::: {.fragment .highlight-red .text fragment-index="1"}
+::: {.fragment .semi-fade-out .text fragment-index="2"}
+-   Minimizar a distância percorrida pelas famílias
+:::
+:::
+
+::: {.fragment .fade-in .highlight-blue .text fragment-index="2"}
+-   Otimizar a localização de vagas de leitos
+:::
+
+## Modelo
+
+::: text
+```{=tex}
+\begin{equation}
+\min \sum_{i=1}^n\sum_{j=1}^n \gamma_{ij} \cdot x_{ij}  + \sum_{i=1}^n \nu_i \label{eq:fo}
+\end{equation}
+```
+:::
+
+::: text
+Sujeito às seguintes restrições:
+
+```{=tex}
+\begin{align}
+        \sum_{i=1}^n x_{ij} &\leqslant o_j + \nu_j,\quad \forall\ j \in \mathbb{I}\label{eq:r1} \\
+        \sum_{j=1}^n x_{ij} &\geqslant \delta_i,\quad \forall\ i \in \mathbb{I}\label{eq:r2} \\
+         \sum_{j=1}^n y_{j} &\leqslant \eta,\quad \forall\ j \in \mathbb{I}\label{eq:r3} 
+\end{align}
+```
+:::
+
+::: footer
+Continua...
+:::
+
+## Modelo
+
+::: text
+Restrições (continuação):
+
+```{=tex}
+\begin{alignat}{2}
+ \pi_{\text{lim}} \cdot y_i &\leqslant \pi_i, &&\forall\ i \in \mathbb{I} \label{eq:r4} \\
+\pi_{\text{i}} \cdot z_{ij} &\leqslant \pi_j, &&\forall\ (i, j) \in \mathbb{I}^2 \label{eq:r10} \\
+    z_{ij}\cdot \gamma_{ij} &\leqslant \gamma_{\text{lim}}, &&\forall\ (i, j) \in \mathbb{I}^2 \label{eq:r5} \\
+          \tau \cdot z_{ij} &\geqslant x_{ij}, &&\forall\ (i, j) \in \mathbb{I}^2 \label{eq:r6} \\
+                     z_{ij} &\leqslant x_{ij}, &&\forall\ (i, j) \in \mathbb{I}^2 \label{eq:r11}\\
+                    \nu_{i} &\leqslant \tau \cdot y_{i}, &&\forall\ i \in \mathbb{I} \label{eq:r7} \\
+                     z_{ij} &\leqslant y_{j}, &&\forall\ (i, j) \in \mathbb{I}^2 \label{eq:r8} \\
+           z_{ij} +  z_{ji} &\leqslant 1, &&\forall\ (i, j) \in \mathbb{I}^2\ |\ i\not=j \label{eq:r9}
+\end{alignat}
+```
+:::
+
+## Modelo
+
+::: {style="font-size:20px"}
+Em que:
+
+::: columns
+::: {.column width="45%"}
+-   $\mathbb{I}$ é conjunto das cidades de Pernambuco e $n$ o número de cidades;
+-   $x_{i,j}$, variável de decisão inteira e positiva, representa nascimentos de residente do município $i$ ocorridos no município $j$;
+-   $z_{i,j}$, variável binária auxiliar, indica quando existe nascimentos da cidade $i$ na cidade $j$;
+-   $y_{j}$, variável binária de decisão, indica se na cidade $j$ deve ser construída uma marternidade;
+-   $\nu_{j}$, variável inteira de decisão, indica a quantidade adicional de vagas na cidade $j$ necessária para atender a demanda;
+-   $\gamma_{i,j}$, parâmetro, representa a distância da cidade $i$ para a cidade $j$ em quilômetros;
+:::
+
+::: {.column style="float:right;"}
+-   $\omicron_j$, parâmetro, é a **oferta** da cidade $j$;
+-   $\delta_i$, parâmetro, é a **demanda** da cidade $i$;
+-   $\eta$, parâmetro, é o número de maternidades a serem construídas;\
+-   $\pi_i$, parâmetro, tamanho da população do município $i$;
+-   $\pi_{\text{lim}}$, parâmetro, tamanho mínimo de população do município que vai receber uma maternidade nova;
+-   $\gamma_{\text{lim}}$, parâmetro, indica distância máxima até uma maternidade qualquer;
+-   $\tau$, constante auxiliar.
+:::
+:::
+:::
+
+## Principais [resultados]{.hl .hl-gold} {.center data-background="var(--gradorange)" data-background-iframe="`r particulas("preta")`"}
+
+<!-- ## Resumos dos Macropolos -->
+
+```{r, out.width= '100%'}
+#| echo: false
+#| class: 'leaflet_maps'
+
+solucao_mod <- solucao_x  %>% 
+  filter(estagio == 2L, modelo == 1L) %>%
+  select(Origem, Destino, x) %>% 
+  filter((x != 0) & (Destino %in% c('2604007', '2604106', '2606002', '2609907',
+                                    '2613909', '2611101', '2611606'))) %>% 
+  left_join(pe %>% 
+              select(municipio = CD_MUN, nome_destino = nome), 
+            by = c("Destino" = "municipio")) %>% 
+  left_join(pe %>% 
+              select(municipio = CD_MUN, população), 
+            by = c("Origem" = "municipio"))
+
+
+polos <- pe %>% 
+  filter(nome != "Fernando de Noronha") %>% 
+  left_join(solucao_x %>% filter(estagio == 1L, modelo == 1L), by = c("CD_MUN" = "Origem")) %>% 
+  group_by(Destino) %>% 
+  summarise(nascimentos = sum(x),
+            populacao = sum(população),
+            Cidades = n()) %>% 
+  left_join(pe %>% st_drop_geometry() %>% 
+              select(Destino = CD_MUN, nome, longitude, latitude)) %>% 
+  rowwise() %>%
+  mutate(text = HTML(paste(
+    "<strong>Polo:</strong> ", 
+    nome,
+    "</br><strong>Nascimentos:</strong> ", 
+    format(nascimentos, decimal.mark = ",", big.mark = "."),
+    "</br><strong>População:</strong> ", 
+    format(populacao, decimal.mark = ",", big.mark = "."),
+    "</br><strong>Cidades:</strong> ", 
+    format(Cidades, decimal.mark = ",", big.mark = "."),
+    sep = ""
+  ))) 
+
+mun <- pe %>% 
+  filter(nome != "Fernando de Noronha") %>% 
+  left_join(solucao_x %>% filter(estagio == 1L, modelo == 1L), by = c("CD_MUN" = "Origem")) %>% 
+  left_join(pe %>% st_drop_geometry() %>% 
+              select(Destino = CD_MUN, nome_destino = nome)) %>% 
+  rowwise() %>%
+  mutate(text = HTML(paste(
+    "<strong>Cidade:</strong> ", 
+    nome,
+    "</br><strong>Nascimentos:</strong> ", 
+    format(x, decimal.mark = ",", big.mark = "."),
+    "</br><strong>População:</strong> ", 
+    format(população, decimal.mark = ",", big.mark = "."),
+    sep = ""
+  ))) 
+
+pal_colors <- c(head(as.character(paletteer_d("ggthemes::calc")), n = 4), "#808080")
+pal <- colorFactor(palette = pal_colors, 
+                   domain = polos$nome)
+
+
+map <- leaflet(options = leafletOptions(
+    attributionControl = FALSE)) %>%
+  addProviderTiles("CartoDB.Positron") %>% 
+  addPolygons(data = pe_limits , weight = 1, color = "black", 
+              fill = FALSE) %>% 
+  addPolygons(weight = 1, color = ~pal(nome_destino), 
+              fillColor = ~pal(nome_destino),
+              fillOpacity = ~scales::rescale_max(log(1 + x)),
+              label = ~text,
+              data = mun) %>% 
+  addPolygons(weight = 2, color = ~pal(nome), 
+              fill = FALSE,
+              data = polos) %>% 
+  addPolylines(data = rodovias_federais,
+               label = ~text,
+               color = 'white',
+               weight = 3) %>% 
+  addCircleMarkers(lng = ~longitude, lat = ~latitude, 
+                   color = "black",
+                   weight = 2,
+                   fillOpacity = .5,
+                   radius = 6, 
+                   label = ~text,
+                   data = polos) %>% 
+  # addCircleMarkers(lng = ~longitude, lat = ~latitude, 
+  #                  color = "black",
+  #                  fillColor = "black",
+  #                  fillOpacity = 1,
+  #                  weight = 2,
+  #                  label = ~text,
+  #                  radius = 1, 
+  #                  data = mun) %>% 
+  addLegend(pal = pal,
+            values = polos$nome,
+            opacity = 1,
+            title = "<span style='font-size:10pt'>Macropolo</span>",
+            position = "topright") %>%
+  #############################
+fitBounds(
+  lng1 = -41.358336,
+  lat1 = -9.482897,
+  lng2 = -34.806691,
+  lat2 = -7.272954
+) %>%
+  addControl(HTML("<b>Distâncias de até 100&nbsp;Km</b><ul style='margin: 5px 0 0 0; padding-left: 20px;'><li>144 municípios</li><li>92% da população</li></ul>"),
+             position = "topright") %>%
+  # Layers control
+  # addLayersControl(
+  #   baseGroups = c("Recife", "Caruaru", "Petrolina"),
+  #   #overlayGroups = c("Quakes", "Outline"),
+  #   options = layersControlOptions(collapsed = FALSE)
+  # ) %>% 
+  addEasyButton(easyButton(
+    icon = "icon ion-home",  
+    title="Ajustar para Pernambuco",
+    onClick=JS("function(btn, map){ 
+               var southWest = new L.LatLng(-9.482897, -41.358336),
+                   northEast = new L.LatLng(-7.272954, -34.806691),
+                   bounds = new L.LatLngBounds(southWest, northEast);
+               map.fitBounds(bounds);
+               }")
+  ))
+
+htmlwidgets::saveWidget(map, "images/mapa4.html")
+rm(map)
+
+```
+
+## [Macropolos]{.hl .hl-blue} {data-background-iframe="images/mapa4.html" data-background-interactive="true"}
+
+
+## Macropolos
+
+<!-- ## Macropólos: Distâncias -->
+
+```{r ggplot3, out.height='100%', fig.align='center'}
+#| echo: false
+#| class: mlkggplot
+
+
+
+figura3 <- solucao_mod %>% 
+  group_by(nome_destino) %>%
+  summarise(n = n(), população = sum(população))
+
+
+list_colors <- c(head(as.character(paletteer_d("ggthemes::calc")), n = 4), "#808080")
+pal_function <- colorFactor(palette = list_colors,
+                   domain = figura3$nome_destino)
+
+colors_polos <- pal_function(figura3$nome_destino)
+names(colors_polos) <- figura3$nome_destino
+
+
+gg_dist <- ggplot() +
+  geom_boxplot(aes(x = nome_destino, y = distância/1000, fill = nome_destino), 
+               data = custo_sol %>% 
+                 filter(nome_destino != nome_origem) %>% 
+                 #mutate(nome_destino = fct_reorder(nome_destino, população, .fun='sum'))) +
+                 mutate(nome_destino = factor(nome_destino, levels = c('Ouricuri', 'Serra Talhada',  'Carpina', 'Petrolina', 'Garanhuns' , 'Caruaru',   'Recife'), ordered = TRUE))) +
+  guides(fill = "none") +
+  geom_label_repel(aes(x = nome_destino, y = distância/1000, label = nome_origem), 
+                   box.padding = 0.5, nudge_x = 0.2,
+                   data = custo_sol %>% filter(((nome_destino == "Garanhuns") & 
+                                                 (distância > 140000))
+                                               )
+                   ) +
+  coord_flip() +
+  scale_fill_manual(values = colors_polos) +
+  labs(x = "Macropolo", y = "Distância (Km)") +
+  #ggtitle("Primeiro Estágio") +
+  scale_y_continuous(expand = c(0, 0)) + 
+  theme(
+        plot.background = element_rect(fill = "white ")
+        )
+```
+
+
+```{r}
+#| echo: false
+#| class: mlkggplot
+gg_dist
+```
+
+
+## Distâncias Médias e Máximas {}
+
+::: {.mlk-center}
+```{r kb1}
+
+format_percent <- scales::label_percent(big.mark = ".", decimal.mark = ",")
+
+tabela1 <- solucao_mod %>% 
+  left_join(costmatrix_table, 
+            by =  c("Origem", "Destino")) %>% 
+  group_by(nome_destino) %>% 
+  summarise(`Distância Média` = mean(Distância,na.rm = TRUE)/1000,
+            `Distância Máxima` = max(Distância,na.rm = TRUE)/1000) %>% 
+  rename(`Polo`= nome_destino)
+
+tabela1 %>%
+  reactable(
+    defaultColDef = colDef(
+      headerClass = "mlk-header",
+      align = "center", 
+      headerVAlign = "center",
+      minWidth = 125,
+      style = list(fontSize = "1rem"),
+      cell = function(value) {
+          div(fontSize = "1rem", value)
+        },
+      headerStyle = list(fontSize = "1rem", color = "black") 
+    ),
+    columnGroups = list(
+      colGroup(align = "center", headerClass =  "mlk-grp-header", 
+               headerStyle = list(headerVAlign = "end", fontSize = "1rem", color = "black"), 
+               name = "Distâncias", 
+               columns = c("Distância Média", "Distância Máxima"))
+    ),
+    columns = list(
+      Polo = colDef(
+        name = "Polo",
+        align = "left"
+      ),
+      `Distância Média` = colDef(
+        name = "Média",
+        cell = function(value) {
+          div(fontSize = "0.75rem", format(round(value),
+            nsmall = 0,
+            decimal.mark = ",",
+            big.mark = ".")
+          )
+        },
+        header = function(value) {
+          units <- div(style = "font-size:80%;color:#737373", "(Km)")
+          div(title = value, value, units)
+        },
+        style = function(value) {
+          if (value <= 100) {
+            color <- "#000000" #008000
+          } else if (value > 100) {
+            color <- "#e00000"
+          } else {
+            color <- "#777"
+          }
+          list(color = color, fontSize = "1rem")
+        },
+        align = "right"
+      ),
+      `Distância Máxima` = colDef(
+        
+        name = "Máxima",
+        cell = function(value) {
+          div(fontSize = "0.75rem", format(round(value),
+            nsmall = 0,
+            decimal.mark = ",",
+            big.mark = ".")
+          )
+        },
+        header = function(value) {
+          units <- div(style = "font-size:80%;color:#737373", "(Km)")
+          div(title = value, value, units)
+        },
+        style = function(value) {
+          if (value <= 100) {
+            color <- "#000000" #"#008000"
+          } else if (value > 100) {
+            color <- "#e00000"
+          } else {
+            color <- "#777"
+          }
+          list(color = color, fontSize = "1rem")
+        },
+        align = "right"
+      )
+    ),
+    #bordered = TRUE,
+    highlight = TRUE, 
+    outlined = FALSE,
+    #compact = TRUE,
+    striped = TRUE,
+    fullWidth = FALSE,
+    defaultSorted = list(
+      "Distância Média" = "desc",
+      "Distância Máxima" = "desc"
+    ),
+    theme = reactableTheme(
+      headerStyle = list(
+        "&:hover[aria-sort]" = list(background = "hsl(0, 0%, 96%)") 
+    )
+  ),
+  class = "mlk-dist-tbl"
+  )
+```
+:::
+
+
+::: mlk-callout-resize
+::: {.callout-warning collapse="false" appearance="simple" icon="true"}
+A estimativa da necessidade de leitos obstétricos segue a [**Nota Técnica Parâmetro de Cálculo**]{.mlk-orange-pe} da **Rede Cegonha**. Considerando tempo médio de permanência no leito (2,5); Taxa média de ocupação (0,7); e Fator de correção (1,21).
+:::
+:::
+
+
+## [Indicadores de]{.mlk-white} [Saúde]{.hl .hl-green .mlk-green} {
+  .center data-background="var(--gradgreen)" 
+  data-background-iframe="`r particulas("branca")`"
+  }
+
+## Indicadores de [Saúde]{.hl .hl-green}
+
+::: text
+-   a [**taxa de mortalidade materna**]{.mlk-orange-pe} --- o número de mortes maternas por causas ligadas à gestação, parto e puerpério (até 42 dias após o parto) por 100 mil nascidos vivos
+-   a [**taxa de mortalidade perinatal**]{.mlk-red-pe} --- indica o número de óbitos ocorridos no período perinatal por mil nascimentos totais.
+:::
+
+::: mlk-center
+```{r}
+
+
+tabela3 <- solucao_mod %>% 
+  mutate(ibge = str_sub(Origem, 1, 6)) %>% 
+  left_join(tipo_parto %>% 
+              select(CODMUNRES,total,cesaria),
+            by = c("ibge"="CODMUNRES")) %>% 
+  left_join(mortalidade_materna %>% 
+              select(cd_ibge,obitos_materno = obitos,nascimentos), 
+            by = c("ibge"="cd_ibge")) %>% 
+  left_join(mortalidade_perinatal %>% 
+              select(cd_ibge,obitos_peri), 
+            by = c("ibge"="cd_ibge")) %>% 
+  group_by(nome_destino) %>% 
+  summarise(partos = sum(total), 
+            cesaria = sum(cesaria),
+            nascimentos = sum(nascimentos),
+            obitos_materno = sum(obitos_materno),
+            obitos_peri = sum(obitos_peri)) %>% 
+  mutate(perc_cesaria = cesaria/partos, 
+         taxa_mortalidade_materna = (obitos_materno/nascimentos)*100000, 
+         taxa_mortalidade_peri = (obitos_peri/nascimentos)*1000) %>% 
+  select(`Polo` = nome_destino, 
+         `Cesária`= perc_cesaria,
+         `Mortalidade Materna`= taxa_mortalidade_materna, 
+         `Mortalidade Perinatal`= taxa_mortalidade_peri) %>% 
+  arrange(desc(`Cesária`)) %>% 
+  mutate(`Cesária` = format_percent(round(`Cesária`,3)))
+
+
+tabela3 %>%
+  reactable(
+    defaultColDef = colDef(
+      headerClass = "mlk-header",
+      align = "left", 
+      headerVAlign = "center",
+      minWidth = 250,
+      style = list(fontSize = "1rem"),
+      cell = function(value) {
+          div(fontSize = "1rem", value)
+        },
+      headerStyle = list(fontSize = "1rem", color = "black") 
+    ),
+    columns = list(
+      Cesária = colDef(format = colFormat(percent = TRUE, digits = 1),
+                       style = function(value) {
+          if (value <= 50) {
+            color <- "#000000" #008000
+          } else if (value > 50) {
+            color <- "#e00000"
+          } else {
+            color <- "#777"
+          }
+          list(color = color, fontSize = "1rem")
+        },
+        align = "right"
+                       ),
+      `Mortalidade Perinatal` = colDef(
+        #name = "Média",
+        cell = function(value) {
+          div(fontSize = "0.75rem", format(round(value, 1),
+            nsmall = 0,
+            decimal.mark = ",",
+            big.mark = ".")
+          )
+        },
+        style = function(value) {
+          if (value <= 100) {
+            color <- "#000000" #008000
+          } else if (value > 100) {
+            color <- "#e00000"
+          } else {
+            color <- "#777"
+          }
+          list(color = color, fontSize = "1rem")
+        },
+        align = "right"
+      ),
+      `Mortalidade Materna` = colDef(
+        #name = "Máxima",
+        cell = function(value) {
+          div(fontSize = "0.75rem", format(round(value, 1),
+            nsmall = 0,
+            decimal.mark = ",",
+            big.mark = ".")
+          )
+        },
+        style = function(value) {
+          if (value <= 100) {
+            color <- "#000000" #"#008000"
+          } else if (value > 100) {
+            color <- "#e00000"
+          } else {
+            color <- "#777"
+          }
+          list(color = color, fontSize = "1rem")
+        },
+        align = "right"
+      )
+    ),
+    #bordered = TRUE,
+    highlight = TRUE, 
+    outlined = FALSE,
+    #compact = TRUE,
+    striped = TRUE,
+    fullWidth = FALSE,
+    defaultSorted = list(
+      "Cesária" = "asc",
+      "Mortalidade Materna" = "asc",
+      "Mortalidade Perinatal" = "asc"
+    ),
+    theme = reactableTheme(
+      headerStyle = list(
+        "&:hover[aria-sort]" = list(background = "hsl(0, 0%, 96%)") #,
+    )
+  ),
+  class = "mlk-dist-tbl"
+  )
+```
+:::
+
+## [--- Perguntas?]{.hl .hl-blue-1 .mlk-black} {
+  .center 
+  data-background-iframe="`r particulas("pernambuco")`" 
+  data-background="var(--gradpink)" 
+  }

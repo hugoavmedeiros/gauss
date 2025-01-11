@@ -1,0 +1,66 @@
+<svg style='width:80%;height:auto;font-size:100%;font-family:inherit;margin:10px 0 10px 0;' xmlns='http://www.w3.org/2000/svg' class="pikchr  unnamed-chunk-3" viewBox="0 0 854.669 541.329">
+<path d="M420.225,57.2797 L 420.225,32.4765 Q 420.225,7.67339 395.422,7.67339 L 395.422,7.67339 Q 370.619,7.67339 370.619,32.4765 L 370.619,32.4765 Q 370.619,57.2797 395.422,57.2797 L 395.422,57.2797 L 420.225,57.2797Z"  style="fill:rgb(159,226,191);stroke-width:2.16;stroke:rgb(159,226,191);" />
+<path d="M547.784,57.2797 L 547.784,32.4765 Q 547.784,7.67339 572.588,7.67339 Q 597.391,7.67339 597.391,32.4765 L 597.391,32.4765 Q 597.391,57.2797 572.588,57.2797 L 547.784,57.2797Z"  style="fill:rgb(159,226,191);stroke-width:2.16;stroke:rgb(159,226,191);" />
+<path d="M395.422,7.67339L572.588,7.67339L597.391,32.4765L597.391,57.2797L370.619,57.2797L370.619,32.4765Z"  style="fill:rgb(159,226,191);stroke-width:2.16;stroke-linejoin:round;stroke:rgb(159,226,191);" />
+<text lengthAdjust="spacingAndGlyphs"  x="484.005" y="32.4765" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">Sistemas Internos</text>
+<path d="M597.391,57.2797 L 597.391,32.4765 Q 597.391,7.67339 572.588,7.67339 L 395.422,7.67339 Q 370.619,7.67339 370.619,32.4765 L 370.619,32.4765 L 370.619,57.2797"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M370.619,57.2797 L 370.619,82.0828 Q 370.619,106.886 395.422,106.886 L 395.422,106.886 Q 420.225,106.886 420.225,82.0828 L 420.225,82.0828 Q 420.225,57.2797 395.422,57.2797 L 395.422,57.2797 L 370.619,57.2797Z"  style="fill:none;" />
+<path d="M597.391,57.2797 L 597.391,82.0828 Q 597.391,106.886 572.588,106.886 L 572.588,106.886 Q 547.784,106.886 547.784,82.0828 L 547.784,82.0828 Q 547.784,57.2797 572.588,57.2797 L 572.588,57.2797 L 597.391,57.2797Z"  style="fill:none;" />
+<path d="M395.422,106.886L572.588,106.886L597.391,82.0828L597.391,57.2797L370.619,57.2797L370.619,82.0828Z"  style="fill:none;" />
+<path d="M597.391,54.1793 L 597.391,82.0828 Q 597.391,106.886 572.588,106.886 L 395.422,106.886 Q 370.619,106.886 370.619,82.0828 L 370.619,78.9824 L 370.619,54.1793"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="484.005" y="80.5326" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Orçamento, Contratos, Obras</text>
+<path d="M597.391,57.2797L370.619,57.2797"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="484.005,163.579 479.685,152.059 488.325,152.059" style="fill:rgb(0,0,0)"/>
+<path d="M484.005,106.886L484.005,157.819"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M374.871,213.185 L 374.871,188.382 Q 374.871,163.579 350.068,163.579 L 350.068,163.579 Q 325.265,163.579 325.265,188.382 L 325.265,188.382 Q 325.265,213.185 350.068,213.185 L 350.068,213.185 L 374.871,213.185Z"  style="fill:rgb(100,149,237);stroke-width:2.16;stroke:rgb(100,149,237);" />
+<path d="M593.139,213.185 L 593.139,188.382 Q 593.139,163.579 617.942,163.579 L 617.942,163.579 Q 642.745,163.579 642.745,188.382 L 642.745,188.382 Q 642.745,213.185 617.942,213.185 L 617.942,213.185 L 593.139,213.185Z"  style="fill:rgb(100,149,237);stroke-width:2.16;stroke:rgb(100,149,237);" />
+<path d="M350.068,163.579L617.942,163.579L642.745,188.382L642.745,213.185L325.265,213.185L325.265,188.382Z"  style="fill:rgb(100,149,237);stroke-width:2.16;stroke-linejoin:round;stroke:rgb(100,149,237);" />
+<text x="484.005" y="188.382" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">Processamento e Padronização de Dados</text>
+<path d="M642.745,213.185 L 642.745,188.382 Q 642.745,163.579 617.942,163.579 L 350.068,163.579 Q 325.265,163.579 325.265,188.382 L 325.265,188.382 L 325.265,213.185"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M325.265,213.185 L 325.265,237.988 Q 325.265,262.791 350.068,262.791 L 350.068,262.791 Q 374.871,262.791 374.871,237.988 L 374.871,237.988 Q 374.871,213.185 350.068,213.185 L 350.068,213.185 L 325.265,213.185Z"  style="fill:none;" />
+<path d="M642.745,213.185 L 642.745,237.988 Q 642.745,262.791 617.942,262.791 L 617.942,262.791 Q 593.139,262.791 593.139,237.988 L 593.139,237.988 Q 593.139,213.185 617.942,213.185 L 617.942,213.185 L 642.745,213.185Z"  style="fill:none;" />
+<path d="M350.068,262.791L617.942,262.791L642.745,237.988L642.745,213.185L325.265,213.185L325.265,237.988Z"  style="fill:none;" />
+<path d="M642.745,210.085 L 642.745,237.988 Q 642.745,262.791 617.942,262.791 L 350.068,262.791 Q 325.265,262.791 325.265,237.988 L 325.265,234.888 L 325.265,210.085"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="484.005" y="236.438" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">COFOG, GFSM, OCDS</text>
+<path d="M642.745,213.185L325.265,213.185"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="484.005,319.484 479.685,307.964 488.325,307.964" style="fill:rgb(0,0,0)"/>
+<path d="M484.005,262.791L484.005,313.724"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M420.225,369.091 L 420.225,344.288 Q 420.225,319.484 395.422,319.484 Q 370.619,319.484 370.619,344.288 L 370.619,344.288 Q 370.619,369.091 395.422,369.091 L 420.225,369.091Z"  style="fill:rgb(255,191,0);stroke-width:2.16;stroke:rgb(255,191,0);" />
+<path d="M547.784,369.091 L 547.784,344.288 Q 547.784,319.484 572.588,319.484 Q 597.391,319.484 597.391,344.288 L 597.391,344.288 Q 597.391,369.091 572.588,369.091 L 547.784,369.091Z"  style="fill:rgb(255,191,0);stroke-width:2.16;stroke:rgb(255,191,0);" />
+<path d="M395.422,319.484L572.588,319.484L597.391,344.288L597.391,369.091L370.619,369.091L370.619,344.288Z"  style="fill:rgb(255,191,0);stroke-width:2.16;stroke-linejoin:round;stroke:rgb(255,191,0);" />
+<text x="484.005" y="344.288" text-anchor="middle" font-weight="bold" fill="rgb(0,0,0)" dominant-baseline="central">REDIPE</text>
+<path d="M597.391,369.091 L 597.391,344.288 Q 597.391,319.484 572.588,319.484 L 395.422,319.484 Q 370.619,319.484 370.619,344.288 L 370.619,344.288 L 370.619,369.091"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M370.619,369.091 L 370.619,393.894 Q 370.619,418.697 395.422,418.697 Q 420.225,418.697 420.225,393.894 Q 420.225,369.091 395.422,369.091 L 370.619,369.091Z"  style="fill:none;" />
+<path d="M597.391,369.091 L 597.391,393.894 Q 597.391,418.697 572.588,418.697 L 572.588,418.697 Q 547.784,418.697 547.784,393.894 Q 547.784,369.091 572.588,369.091 L 572.588,369.091 L 597.391,369.091Z"  style="fill:none;" />
+<path d="M395.422,418.697L572.588,418.697L597.391,393.894L597.391,369.091L370.619,369.091L370.619,393.894Z"  style="fill:none;" />
+<path d="M597.391,365.99 L 597.391,393.894 Q 597.391,418.697 572.588,418.697 L 395.422,418.697 Q 370.619,418.697 370.619,393.894 L 370.619,390.793 L 370.619,365.99"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="484.005" y="392.344" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Base de Dados de Investimentos</text>
+<path d="M597.391,369.091L370.619,369.091"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="682.43,369.091 670.91,373.411 670.91,364.771" style="fill:rgb(0,0,0)"/>
+<path d="M597.391,369.091L676.67,369.091"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="285.58,369.091 297.1,364.771 297.1,373.411" style="fill:rgb(0,0,0)"/>
+<path d="M370.619,369.091L291.34,369.091"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M121.17,397.437L279.91,397.437A5.66929 5.66929 0 0 0 285.58 391.768L285.58,346.414A5.66929 5.66929 0 0 0 279.91 340.744L121.17,340.744A5.66929 5.66929 0 0 0 115.501 346.414L115.501,391.768A5.66929 5.66929 0 0 0 121.17 397.437Z"  style="fill:rgb(255,216,190);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="200.54" y="369.091" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Portal Público</text>
+<path d="M688.099,397.437L846.84,397.437A5.66929 5.66929 0 0 0 852.509 391.768L852.509,346.414A5.66929 5.66929 0 0 0 846.84 340.744L688.099,340.744A5.66929 5.66929 0 0 0 682.43 346.414L682.43,391.768A5.66929 5.66929 0 0 0 688.099 397.437Z"  style="fill:rgb(164,195,178);stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="767.469" y="369.091" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">API e Ferramentas</text>
+<polygon points="200.54,454.13 196.22,442.61 204.86,442.61" style="fill:rgb(0,0,0)"/>
+<path d="M200.54,397.437L200.54,448.37"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="767.469,454.13 763.149,442.61 771.789,442.61" style="fill:rgb(0,0,0)"/>
+<path d="M767.469,397.437L767.469,448.37"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M688.099,539.169L846.84,539.169A5.66929 5.66929 0 0 0 852.509 533.5L852.509,459.799A5.66929 5.66929 0 0 0 846.84 454.13L688.099,454.13A5.66929 5.66929 0 0 0 682.43 459.799L682.43,533.5A5.66929 5.66929 0 0 0 688.099 539.169Z"  style="fill:rgb(204,227,222);" />
+<text x="767.469" y="476.49" text-anchor="middle" dominant-baseline="central">Gestores</text>
+<text x="767.469" y="496.65" text-anchor="middle" dominant-baseline="central">Pesquisadores</text>
+<text x="767.469" y="516.81" text-anchor="middle" dominant-baseline="central">Órgãos de Controle</text>
+<path d="M121.17,539.169L279.91,539.169A5.66929 5.66929 0 0 0 285.58 533.5L285.58,459.799A5.66929 5.66929 0 0 0 279.91 454.13L121.17,454.13A5.66929 5.66929 0 0 0 115.501 459.799L115.501,533.5A5.66929 5.66929 0 0 0 121.17 539.169Z"  style="fill:rgb(255,238,221);" />
+<text x="200.54" y="476.49" text-anchor="middle" dominant-baseline="central">Cidadãos</text>
+<text x="200.54" y="496.65" text-anchor="middle" dominant-baseline="central">Jornalistas</text>
+<text x="200.54" y="516.81" text-anchor="middle" dominant-baseline="central">ONGs</text>
+<text x="16.3786" y="14.76" text-anchor="start" fill="rgb(169,169,169)" font-size="125%" dominant-baseline="central">A REDIPPE é estruturada em</text>
+<text x="16.3786" y="36.0198" text-anchor="start" fill="rgb(169,169,169)" font-size="125%" dominant-baseline="central">camadas integradas, desde</text>
+<text x="16.3786" y="57.2797" text-anchor="start" fill="rgb(169,169,169)" font-size="125%" dominant-baseline="central">a coleta de dados até sua</text>
+<text x="16.3786" y="78.5395" text-anchor="start" fill="rgb(169,169,169)" font-size="125%" dominant-baseline="central">disponibilização para gestores</text>
+<text x="16.3786" y="99.7994" text-anchor="start" fill="rgb(169,169,169)" font-size="125%" dominant-baseline="central">e sociedade.</text>
+<path d="M2.16,4.13008L2.16,110.429"  style="fill:none;stroke-width:8.50394;stroke:rgb(255,191,0);" />
+</svg>
+
