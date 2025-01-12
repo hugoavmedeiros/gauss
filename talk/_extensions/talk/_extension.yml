@@ -7,6 +7,7 @@ contributes:
     vialactea: !expr library(vialactea)
   formats:
     revealjs:
+      self-contained: true
       include-in-header: header.html
       include-after-body: footer.html
       output-file: "index"
@@ -20,15 +21,15 @@ contributes:
       controlsTutorial: true
       slide-number: false
       incremental: false
-      html-math-method:
-        method: mathjax
-        url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?config=TeX-AMS_HTML"
+      #html-math-method:
+      #  method: mathjax
+      #  url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?config=TeX-AMS_HTML"
       logo: logo_gauss_branca.png
       theme: [custom.scss]
       css: styles.css
       transition: slide
       transition-speed: slow
-      chalkboard: true
+      #chalkboard: true
       #header:
       footer: ""
       linestretch: 1.5

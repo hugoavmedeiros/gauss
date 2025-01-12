@@ -676,3 +676,15 @@ ol.aside-footnotes li p {
   display: flex !important;
   visibility: visible !important;
 }
+
+ .crosstalk-filters {
+    font-size: 16px; /* Tamanho da fonte do filtro */
+    margin-bottom: 20px; /* Espaçamento inferior */
+    width: 300px; /* Largura */
+  }
+
+  .plotly-graph {
+    width: 80%; /* Largura relativa à página */
+    height: 500px; /* Altura fixa */
+    margin: auto; /* Centralizar */
+  }

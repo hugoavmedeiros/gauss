@@ -1,6 +1,0 @@
-<div><pre>
-/*    1 */  source("modelo_dados_pikchr.R") 
-                 ^
-ERROR: syntax error
-</pre></div>
-

@@ -154,6 +154,188 @@ Biólogo, Doutorando em Ciência Política na UFPE, com a temática sobre pobrez
 :::
 :::
 
+## Soluções Financeiras
+
+::: {style="font-size: 16px; justify-content: center; align-items: center;"}
+
+```{r, echo=FALSE}
+
+library(anomalize)
+library(crosstalk)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(prophet)
+library(reactable)
+library(tidyr)
+
+# Carregar os dados
+df_2022 <- read.csv2(
+  'data/financeiro_despmensais_2022.csv',
+  encoding = "latin1",
+  dec = '.',
+  sep = ";"
+) %>%
+  mutate(
+    Data = as.Date(Data, format = "%Y-%m-%d")
+  )
+
+# Carregar os dados
+df_2023 <- read.csv2(
+  'data/financeiro_despmensais_2023.csv',
+  encoding = "latin1",
+  dec = '.',
+  sep = ";"
+) %>%
+  mutate(
+    Data = as.Date(Data, format = "%Y-%m-%d")
+  )
+
+df_completo <- df_2023 %>% 
+  bind_rows(df_2022)
+
+# Elementos a serem considerados
+elementos <- c("SERVICOS DE TECNOLOGIA DA INFORMACAO E COMUNICACAO - PJ", 
+               "EQUIPAMENTOS E MATERIAL PERMANENTE")
+
+# Filtrar dados apenas para os elementos selecionados
+dados_filtrados <- df_completo %>%
+  filter(Elemento_Despesa %in% elementos) %>%
+  group_by(Elemento_Despesa, Data) %>%
+  summarize(Valor_Total = sum(Valor), .groups = "drop") %>%
+  rename(ds = Data, y = Valor_Total) %>%
+  filter(!is.na(y))  # Remover valores ausentes
+
+# Criar base para enriquecimento
+dados_enriquecidos <- list()
+
+# Processar cada elemento
+for (elemento in elementos) {
+  # Filtrar dados para o elemento atual
+  dados_elemento <- dados_filtrados %>% filter(Elemento_Despesa == elemento)
+  
+  # Garantir continuidade dos dados e preencher valores ausentes
+  # dados_elemento <- dados_elemento %>%
+  #   complete(ds = seq(min(ds), max(ds), by = "month")) %>%
+  #   mutate(y = ifelse(is.na(y), 0, y))  # Substituir valores ausentes por 0
+  # 
+  # Detectar anomalias nos dados históricos
+  dados_anomalias <- dados_elemento %>%
+    time_decompose(y, method = "stl", frequency = "auto") %>%
+    anomalize(remainder) %>%
+    time_recompose()
+  
+  # Treinar o modelo Prophet
+  modelo_prophet <- prophet(
+    yearly.seasonality = TRUE,
+    weekly.seasonality = FALSE,
+    daily.seasonality = FALSE,
+    seasonality.mode = 'multiplicative'
+  )
+  modelo_prophet <- fit.prophet(modelo_prophet, dados_elemento)
+  
+  # Criar dataframe para previsão de 12 meses
+  future <- make_future_dataframe(modelo_prophet, periods = 24, freq = "month")
+  forecast <- predict(modelo_prophet, future)
+  
+  # Combinar previsões com os dados originais e anomalias
+  dados_previstos <- dados_elemento %>%
+    full_join(forecast %>% select(ds, yhat), by = "ds") %>%
+    left_join(dados_anomalias %>% select(ds, anomaly), by = "ds") %>%
+    mutate(Elemento_Despesa = elemento)  # Adicionar o elemento para identificação
+  
+  # Adicionar à base
+  dados_enriquecidos[[elemento]] <- dados_previstos
+}
+
+# Combinar os resultados para todos os elementos
+dados_enriquecidos <- bind_rows(dados_enriquecidos) %>%
+  mutate(
+    yhat = ifelse(yhat < 0, 0, yhat),
+    valor = ifelse(is.na(y) | y == '', yhat, y),
+    anomalia = case_when(
+      anomaly == "Yes" ~ "Sim",
+      is.na(anomaly) | anomaly == "No" ~ "Não"
+    ),
+    is_anomaly = case_when(anomaly == "Yes" ~ TRUE, TRUE ~ FALSE)
+  )
+
+#### Chunk para Crosstalk e Visualização ----
+shared_data <- SharedData$new(dados_enriquecidos)
+
+filter_select(
+  id = "elemento_despesa",
+  label = "Selecione o Elemento de Despesa",
+  sharedData = shared_data,
+  group = ~Elemento_Despesa,
+  multiple = F
+)
+
+# reactable(
+#           shared_data,
+#           searchable = TRUE,
+#           filterable = TRUE,
+#           highlight = TRUE,
+#           defaultPageSize = 10#,
+#           # columns = list(
+#           #   Data = colDef(name = "Data"),
+#           #   Categoria = colDef(name = "Categoria"),
+#           #   Valor = colDef(name = "Valor", format = colFormat(separators = TRUE))
+#           # )
+#         )
+
+  # Gráfico dinâmico
+  plot_ly() %>%
+  # Traçar os dados reais
+  add_trace(
+    data = shared_data,
+    x = ~ds,
+    y = ~valor,
+    type = 'scatter',
+    mode = 'lines+markers',
+    #fill = 'tonexty',
+    line = list(color = 'gray'),
+    marker = list(
+      size = 6,
+      color = ~ifelse(anomalia == "Sim", "red", "blue"),
+      symbol = "circle"
+    ),
+    name = "Dados"
+  ) %>%
+  layout(
+    title = list(
+      text = "Série Temporal com Detecção de Anomalias",
+      font = list(family = "Arial", size = 18)
+    ),
+    xaxis = list(
+      title = "",
+      zeroline = FALSE,
+      tickformat = "%b %Y",
+      showgrid = F
+    ),
+    yaxis = list(
+      title = "",
+      zeroline = FALSE,
+      showgrid = F
+    ),
+    margin = list(
+      l = 50,  # Margem esquerda
+      r = 50,  # Margem direita
+      t = 50,  # Margem superior
+      b = 100  # Margem inferior
+    )
+  ) %>%
+  config(
+    locale = "pt-BR",  # Idioma
+    displayModeBar = TRUE,
+    responsive = TRUE
+  )
+
+
+
+```
+
+:::
+
 ## [--- Perguntas?]{.hl .hl-blue-1 .mlk-black} { .center data-background="var(--gradpink)"}
   
-
