@@ -7,7 +7,6 @@ params:
   subtitulo:  'Transformamos Dados em Soluções Sustentáveis e Estratégicas'
 ---
 
-
 ```{r setup, include=FALSE}
 ## Pacotes importante e dados
 library(knitr)
@@ -34,6 +33,8 @@ library(svglite)
 library(plotly)
 
 ```
+
+
 
 <!--
 ## {data-background-iframe="`r particulas()`" data-background="var(--gradcapa-8)" }
@@ -73,6 +74,8 @@ Ser [**referência em consultoria**]{.mlk-blue-5-pe}, reconhecida pela [*inovaç
 
 ::: text
 
+
+
 ```{pikchr}
 #| echo: false
 #| fontFamily: 'Jost'
@@ -87,6 +90,8 @@ box thick "Interdisciplinaridade" bold big ht lg wid al rad .15cm fill 0xDDCC77 
 move right .2cm
 box  thick "Sustentabilidade" bold big ht lg wid al rad .15cm fill 0x117733 color -1
 ```
+
+
 
 
 - [**Excelência:**]{style="color:#4477AA;"} Alcançar a qualidade e a satisfação dos clientes nos serviços prestados.
@@ -276,6 +281,8 @@ Criamos sistemas estratégicos personalizados para acompanhamento interativo em 
 
 ::: {style="font-size: 13px; justify-content: center; align-items: center;"}
 
+
+
 ```{r, echo=FALSE}
 
 library(anomalize)
@@ -447,7 +454,10 @@ previsao_inicio <- as.Date("2024-01-01")
 
 ```
 
+
+
 :::
 
 ## [--- Perguntas?]{.hl .hl-blue-1 .mlk-black} { .center data-background="var(--gradpink)"}
   
+
