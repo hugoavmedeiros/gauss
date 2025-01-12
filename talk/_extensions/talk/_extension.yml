@@ -7,7 +7,7 @@ contributes:
     vialactea: !expr library(vialactea)
   formats:
     revealjs:
-      self-contained: false
+      self-contained: true
       include-in-header: header.html
       include-after-body: footer.html
       output-file: "index"
